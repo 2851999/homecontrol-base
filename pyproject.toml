@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "homecontrol-base"
+version = "0.0.1"
+authors = [{ name = "2851999", email = "2851999@users.noreply.github.com" }]
+description = "A library for controlling home appliances"
+license = { text = "Apache License 2.0" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache License 2.0",
+    "Operating System :: OS Independent",
+]
+dependencies = ["pydantic", "requests", "msmart-ng", "SQLAlchemy", "broadlink"]
