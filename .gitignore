@@ -21,3 +21,6 @@ var/
 *.egg
 
 .venv/
+
+# Local configuration files
+midea.json
