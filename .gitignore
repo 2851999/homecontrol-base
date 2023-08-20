@@ -28,3 +28,4 @@ var/
 
 # Local configuration files
 midea.json
+database.json

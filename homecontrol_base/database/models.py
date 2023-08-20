@@ -1,14 +1,14 @@
 import uuid
 
-from sqlalchemy import UUID, Column, Integer, String
+from sqlalchemy import Column, Integer, String, Uuid
 
-from homecontrol_base.database.base import Base
+from homecontrol_base.database.homecontrol_base import Base
 
 
 class ACDevice(Base):
     __tablename__ = "ac_devices"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, unique=True, index=True)
     ip_address = Column(String)
     identifier = Column(Integer)
