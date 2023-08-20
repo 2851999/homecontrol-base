@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 from typing import Generic, Optional, Type, TypeVar
-from pydantic import RootModel
 
+from pydantic import RootModel
 from pydantic.dataclasses import dataclass
 
 from homecontrol_base.config.exceptions import ConfigFileNotFound
@@ -11,6 +11,8 @@ TDataclass = TypeVar("TDataclass", bound=dataclass)
 
 
 class BaseConfig(Generic[TDataclass]):
+    """Base class for loading and saving config using pydantic"""
+
     _dataclass_type: Type[TDataclass]
     _local_file_path: Path
     _loaded_file_path: Path

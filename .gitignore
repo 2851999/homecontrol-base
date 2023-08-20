@@ -22,5 +22,9 @@ var/
 
 .venv/
 
+# VSCode
+.vscode/settings.json
+
+
 # Local configuration files
 midea.json

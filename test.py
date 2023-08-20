@@ -1,4 +1,5 @@
-from homecontrol_base.config.midea_account import MideaConfig
+from homecontrol_base.aircon.device import ACDevice
+from homecontrol_base.config.midea import MideaConfig
 
 
 config = MideaConfig()
@@ -6,3 +7,6 @@ config = MideaConfig()
 # config.save()
 
 print(config.account)
+
+device = ACDevice.discover("Test", "192.168.1.85", config.account)
+print(device)
