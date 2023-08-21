@@ -1,7 +1,6 @@
-from typing import Any
 from sqlalchemy.orm import declarative_base
-from homecontrol_base.config.database import DatabaseConfig
 
+from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.database.core import Database
 
 Base = declarative_base()

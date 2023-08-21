@@ -3,7 +3,7 @@ import asyncio
 from msmart.scanner import MideaDiscovery
 
 from homecontrol_base.config.midea import MideaAccount
-from homecontrol_base.database import models
+from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.exceptions import DeviceConnectionError
 
 

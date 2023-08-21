@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy import Column, Integer, String, Uuid
 
-from homecontrol_base.database.homecontrol_base import Base
+from homecontrol_base.database.homecontrol_base.database import Base
 
 
 class ACDevice(Base):
