@@ -1,8 +1,9 @@
 import uuid
 
 from sqlalchemy import Column, Integer, String, Uuid
+from sqlalchemy.orm import declarative_base
 
-from homecontrol_base.database.homecontrol_base.database import Base
+Base = declarative_base()
 
 
 class ACDevice(Base):

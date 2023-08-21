@@ -3,7 +3,9 @@ from sqlalchemy import create_engine
 from homecontrol_base.aircon.device import ACDevice
 from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.config.midea import MideaConfig
-from homecontrol_base.database.homecontrol_base.database import db as homecontrol_db
+from homecontrol_base.database.homecontrol_base.database import (
+    database as homecontrol_db,
+)
 
 # config = MideaConfig()
 # # config.account.username = "new_test"
