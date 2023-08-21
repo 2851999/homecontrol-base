@@ -11,7 +11,9 @@ class ACDevice:
     """Class for handling an air conditioning device"""
 
     @staticmethod
-    def discover(name: str, ip_address: str, account: MideaAccount) -> models.ACDevice:
+    def discover(
+        name: str, ip_address: str, account: MideaAccount
+    ) -> models.ACDeviceInfo:
         """Attempts to make a connection with an air conditioning unit given
         it's ip address and returns the relevant details to make a connection
 
@@ -21,7 +23,7 @@ class ACDevice:
             account (MideaAccount): Account to use for the discovery
 
         Returns:
-            models.ACDevice: Information for connecting to the device
+            models.ACDeviceInfo: Information for connecting to the device
 
         Raises:
             DeviceConnectionError: When an error occurs while attempting to
@@ -54,7 +56,7 @@ class ACDevice:
                 )
 
             # Return the required info
-            return models.ACDevice(
+            return models.ACDeviceInfo(
                 name=name,
                 ip_address=ip_address,
                 identifier=found_device.id,

@@ -6,7 +6,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 
-class ACDevice(Base):
+class ACDeviceInfo(Base):
     __tablename__ = "ac_devices"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)

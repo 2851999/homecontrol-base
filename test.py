@@ -14,12 +14,12 @@ from homecontrol_base.database.homecontrol_base.database import (
 # print(config.account)
 
 # device = ACDevice.discover("Test", "192.168.1.85", config.account)
-# print(device)
 
 # engine = create_engine("sqlite:///:memory:", echo=True)
 # Base.metadata.create_all(engine)
 
 homecontrol_db.create_tables()
-print(homecontrol_db.engine)
 with homecontrol_db.connect() as session:
-    print("HELLO")
+    # print(session.add_ac_device(device))
+    session.delete_ac_device("6927f184-ba42-4ae9-b4f1-c4c975a2966b")
+    print([device.id for device in session.get_ac_devices()])
