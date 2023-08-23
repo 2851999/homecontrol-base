@@ -1,10 +1,10 @@
 from uuid import UUID
-from sqlalchemy import Uuid
+
 from sqlalchemy.orm import Session
 
 from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.database.core import Database, DatabaseConnection
-from homecontrol_base.database.homecontrol_base.models import Base, ACDeviceInfo
+from homecontrol_base.database.homecontrol_base.models import ACDeviceInfo, Base
 
 
 class HomecontrolBaseDatabaseConnection(DatabaseConnection):
@@ -17,7 +17,7 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
 
     """--------------------- Air conditioning devices ---------------------"""
 
-    def add_ac_device(self, device: ACDeviceInfo) -> ACDeviceInfo:
+    def create_ac_device(self, device: ACDeviceInfo) -> ACDeviceInfo:
         self._session.add(device)
         self._session.commit()
         self._session.refresh(device)
@@ -26,7 +26,7 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
     def get_ac_device(self, device_id: str) -> ACDeviceInfo:
         return (
             self._session.query(ACDeviceInfo)
-            .filter(ACDeviceInfo.id == device_id)
+            .filter(ACDeviceInfo.id == UUID(device_id))
             .first()
         )
 
