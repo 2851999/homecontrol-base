@@ -122,6 +122,10 @@ class ACDevice:
         # Attempt to apply the state
         self._apply_state()
 
+    def get_info(self) -> models.ACDeviceInfo:
+        """Returns information about the device"""
+        return self._device_info
+
     @staticmethod
     def discover(
         name: str, ip_address: str, account: MideaAccount

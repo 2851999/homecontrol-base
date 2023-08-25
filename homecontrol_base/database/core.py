@@ -68,6 +68,7 @@ class Database(Generic[TDatabaseConnection]):
 
     @contextmanager
     def connect(self) -> Generator[TDatabaseConnection, None, None]:
+        """Connects to the database"""
         session = self._session_factory()
         try:
             yield self._connection_type(session)
