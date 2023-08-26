@@ -64,7 +64,26 @@ class ACManager:
                 device = self._load_device(conn.get_ac_device(device_id))
         return device
 
-    def add_device(self, name: str, ip_address: str) -> str:
+    def get_device_by_name(self, device_name: str) -> ACDevice:
+        """Returns a device given it's name - slower than get_device
+
+        Attempts to load from the database if not already loaded
+
+        Args:
+            device_name (str): The name of the device to get
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+        # Look up the device in the database (so can get id)
+        with homecontrol_db.connect() as conn:
+            device_info = conn.get_ac_device_by_name(device_name)
+        device = self._devices.get(device_info.id)
+        if not device:
+            device = self._load_device(device_info)
+        return device
+
+    def add_device(self, name: str, ip_address: str) -> ACDevice:
         """Adds an air conditioning device
 
         Args:
@@ -84,5 +103,4 @@ class ACManager:
         )
         with homecontrol_db.connect() as conn:
             device_info = conn.create_ac_device(device_info)
-        self._load_device(device_info)
-        return str(device_info.id)
+        return self._load_device(device_info)

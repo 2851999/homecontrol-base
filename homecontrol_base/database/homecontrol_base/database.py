@@ -26,7 +26,7 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
         return device
 
     def get_ac_device(self, device_id: str) -> ACDeviceInfo:
-        """Returns ACDevice info given an air conditioning unit's device ID
+        """Returns ACDeviceInfo given an air conditioning unit's device ID
 
         Args:
             device_id (str): The ID of the air conditioning unit
@@ -49,12 +49,36 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
             )
         return device_info
 
+    def get_ac_device_by_name(self, device_name: str) -> ACDeviceInfo:
+        """Returns ACDeviceInfo given an air conditioning unit's device ID
+
+        Args:
+            device_id (str): The ID of the air conditioning unit
+
+        Returns:
+            ACDeviceInfo: Info about the device
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+
+        device_info = (
+            self._session.query(ACDeviceInfo)
+            .filter(ACDeviceInfo.name == device_name)
+            .first()
+        )
+        if not device_info:
+            raise DeviceNotFoundError(
+                f"Air conditioning unit with name '{device_name}' was not found"
+            )
+        return device_info
+
     def get_ac_devices(self) -> list[ACDeviceInfo]:
         """Returns a list of information about all air conditioning devices"""
         return self._session.query(ACDeviceInfo).all()
 
     def delete_ac_device(self, device_id: str):
-        """Deletes an ACDevice info given the air conditioning unit's device id
+        """Deletes an ACDeviceInfo given the air conditioning unit's device id
 
         Args:
             device_id (str): The ID of the air conditioning unit

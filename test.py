@@ -1,5 +1,7 @@
-from pydantic import BaseModel
-from sqlalchemy import create_engine
+from typing import Union
+from pydantic import UUID4, BaseModel, field_validator
+from pydantic.dataclasses import dataclass
+from sqlalchemy import Uuid, create_engine
 
 from homecontrol_base.aircon.device import ACDevice
 from homecontrol_base.aircon.manager import ACManager
@@ -32,6 +34,22 @@ homecontrol_db.create_tables()
 #     print(state)
 
 ac_manager = ACManager()
-ac_manager.add_device("Test", "192.168.1.85")
-# device = ac_manager.get_device("873b9d88-aaac-4806-9f0a-2a1e9b85f498")
-# print(device.get_state())
+# ac_manager.add_device("Test", "192.168.1.85")
+
+
+# class Test(BaseModel):
+#     id: str
+#     name: str
+
+#     class Config:
+#         from_attributes = True
+
+#     _extract_id = field_validator("id", mode="before")(lambda value: str(value))
+
+
+# test = Test.model_validate(ac_manager.get_device_by_name("Test").get_info())
+# print(test.model_dump())
+
+
+device = ac_manager.get_device("05e06c5f-a3db-4397-843a-e479e6a2a310")
+print(device.get_state())
