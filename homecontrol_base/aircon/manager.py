@@ -1,4 +1,5 @@
 from homecontrol_base.aircon.device import ACDevice
+from homecontrol_base.config.midea import MideaConfig
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
@@ -12,9 +13,10 @@ class ACManager:
     _lazy_load: bool
     _loaded_all: bool
 
+    _midea_config: MideaConfig
     _devices: dict[str, ACDevice]
 
-    def __init__(self, lazy_load: bool = False):
+    def __init__(self, lazy_load: bool = True):
         """Constructor
 
         Args:
@@ -24,6 +26,7 @@ class ACManager:
         """
         self._lazy_load = lazy_load
         self._loaded_all = False
+        self._midea_config = MideaConfig()
         self._devices = {}
 
         # Load all devices if requested
@@ -59,9 +62,27 @@ class ACManager:
             # Attempt to load it
             with homecontrol_db.connect() as conn:
                 device = self._load_device(conn.get_ac_device(device_id))
-
-            if not device:
-                raise DeviceNotFoundError(
-                    f"Air conditioning unit with id '{device_id}' was not found"
-                )
         return device
+
+    def add_device(self, name: str, ip_address: str) -> str:
+        """Adds an air conditioning device
+
+        Args:
+            name (str): Name to describe the device
+            ip_address (str): IP address of the device
+
+        Returns:
+            str: The new device's id
+
+        Raises:
+            DeviceConnectionError: When an error occurs while attempting to
+                                   connect to the device
+            DeviceNotFoundError: When the device isn't found
+        """
+        device_info = ACDevice.discover(
+            name=name, ip_address=ip_address, account=self._midea_config.account
+        )
+        with homecontrol_db.connect() as conn:
+            device_info = conn.create_ac_device(device_info)
+        self._load_device(device_info)
+        return str(device_info.id)

@@ -1,13 +1,13 @@
 import asyncio
 
-from msmart.scanner import MideaDiscovery
 from msmart.device import air_conditioning
+from msmart.scanner import MideaDiscovery
+
 from homecontrol_base.aircon.exceptions import ACInvalidStateError
 from homecontrol_base.aircon.state import ACDeviceState
-
 from homecontrol_base.config.midea import MideaAccount
 from homecontrol_base.database.homecontrol_base import models
-from homecontrol_base.exceptions import DeviceConnectionError
+from homecontrol_base.exceptions import DeviceConnectionError, DeviceNotFoundError
 
 
 class ACDevice:
@@ -144,6 +144,7 @@ class ACDevice:
         Raises:
             DeviceConnectionError: When an error occurs while attempting to
                                    connect to the device
+            DeviceNotFoundError: When the device isn't found
         """
 
         found_devices = None
@@ -179,6 +180,6 @@ class ACDevice:
                 key=found_device.key,
                 token=found_device.token,
             )
-        raise DeviceConnectionError(
-            f"Unable to find the air conditioning unit with ip {ip_address}"
+        raise DeviceNotFoundError(
+            f"Unable to find the air conditioning unit with ip address '{ip_address}'"
         )
