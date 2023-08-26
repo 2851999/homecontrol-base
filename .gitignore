@@ -29,6 +29,7 @@ var/
 # Local configuration files
 midea.json
 database.json
+hue.json
 
 # Local database
 homecontrol_base.db

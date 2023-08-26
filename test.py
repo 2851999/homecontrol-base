@@ -6,6 +6,7 @@ from sqlalchemy import Uuid, create_engine
 from homecontrol_base.aircon.device import ACDevice
 from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.config.database import DatabaseConfig
+from homecontrol_base.config.hue import HueConfig
 from homecontrol_base.config.midea import MideaConfig
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
