@@ -7,7 +7,7 @@ from homecontrol_base.config.base import BaseConfig
 
 @dataclass
 class HueConfigData:
-    """Phillip's Hue config data"""
+    """Phillips Hue config data"""
 
     ca_cert: Path
 
