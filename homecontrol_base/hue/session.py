@@ -59,7 +59,7 @@ class HueBridgeSession(SessionWithBaseURL):
 
         # Auth setup
         if auth:
-            self.headers.update({"hue-application-key": connection_info.client_key})
+            self.headers.update({"hue-application-key": connection_info.username})
         self.mount("https://", HostNameIgnoringAdapter())
         self.verify = ca_cert
 

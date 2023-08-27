@@ -1,8 +1,8 @@
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Generator
 
-import requests
-from pydantic import TypeAdapter
-
+from homecontrol_base.config.hue import HueConfig
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.connection import HueBridgeAPIConnection
 from homecontrol_base.hue.discovery import discover_hue_bridges
@@ -14,14 +14,26 @@ class HueBridge:
     """Handles a Phillips Hue bridge"""
 
     _bridge_info: models.HueBridgeInfo
+    _hue_config: HueConfig
 
-    def __init__(self, bridge_info: models.HueBridgeInfo) -> None:
+    def __init__(
+        self, bridge_info: models.HueBridgeInfo, hue_config: HueConfig
+    ) -> None:
         """Constructor
 
         Args:
             bridge_info (models.HueBridgeInfo): Hue bridge connection info
+            hue_config (HueConfig): Hue config
         """
         self._bridge_info = bridge_info
+        self._hue_config = hue_config
+
+    @contextmanager
+    def connect_api(self) -> Generator[HueBridgeAPIConnection, None, None]:
+        with HueBridgeSession(
+            connection_info=self._bridge_info, ca_cert=self._hue_config.ca_cert
+        ) as session:
+            yield HueBridgeAPIConnection(session)
 
     @staticmethod
     def authenticate(

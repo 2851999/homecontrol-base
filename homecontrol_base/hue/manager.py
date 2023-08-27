@@ -24,7 +24,7 @@ class HueManager:
 
     def _load_bridge(self, bridge_info: models.HueBridgeInfo) -> HueBridge:
         """Adds a bridge into _bridges"""
-        bridge = HueBridge(bridge_info)
+        bridge = HueBridge(bridge_info, self._hue_config)
         self._bridges[bridge_info.id] = bridge
         return bridge
 
@@ -67,7 +67,7 @@ class HueManager:
         # Look up the bridge in the database (so can get id)
         with homecontrol_db.connect() as conn:
             bridge_info = conn.get_hue_bridge_by_name(bridge_name)
-        bridge = self._devices.get(bridge_info.id)
+        bridge = self._bridges.get(bridge_info.id)
         if not bridge:
             bridge = self._load_bridge(bridge_info)
         return bridge
