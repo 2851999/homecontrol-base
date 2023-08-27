@@ -12,6 +12,7 @@ from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
 from homecontrol_base.hue.bridge import HueBridge
+from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 
 #  config = MideaConfig()
 # # config.account.username = "new_test"
@@ -56,4 +57,11 @@ ac_manager = ACManager()
 # device = ac_manager.get_device("05e06c5f-a3db-4397-843a-e479e6a2a310")
 # print(device.get_state())
 
-print(HueBridge.discover())
+hue_config = HueConfig()
+bridges = HueBridge.discover()
+auth_info = None
+while not auth_info:
+    try:
+        HueBridge.authenticate("Home", bridges[0], hue_config.ca_cert)
+    except HueBridgeButtonNotPressedError as err:
+        input("Press enter once you have pressed the button on the Hue bridge")

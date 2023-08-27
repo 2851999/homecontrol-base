@@ -1,16 +1,12 @@
+from pathlib import Path
+
 import requests
 from pydantic import TypeAdapter
-from pydantic.dataclasses import dataclass
 
 from homecontrol_base.database.homecontrol_base import models
-from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
-
-
-@dataclass
-class HueBridgeDiscoverInfo:
-    id: str
-    internalipaddress: str
-    port: int
+from homecontrol_base.hue.api.connection import HueBridgeAPIConnection
+from homecontrol_base.hue.session import HueBridgeSession
+from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 
 
 class HueBridge:
@@ -20,7 +16,7 @@ class HueBridge:
 
     @staticmethod
     def authenticate(
-        name: str, discover_info: HueBridgeDiscoverInfo
+        name: str, discover_info: HueBridgeDiscoverInfo, ca_cert: Path
     ) -> models.HueBridgeInfo:
         """Requests a new application key from a bridge
 
@@ -31,6 +27,8 @@ class HueBridge:
         Args:
             name (str): Name to label the bridge
             discover_info (str): Information from discovery
+            ca_cert (Path): Path to the Hue bridge certificate required for a
+                            HTTPS connection
 
         Returns:
             models.HueBridgeInfo: Information required to connect to a bride
@@ -39,33 +37,11 @@ class HueBridge:
             HueBridgeButtonNotPressedError: When the button on the Hue bridge
                                             needs to be pressed
         """
-        # Request a key
-        response = requests.post(
-            url=f"https://{discover_info.internalipaddress}/api",
-            data={"devicetype": "homecontrol#base", "generateclientkey": True},
-        )
-        response.raise_for_status()
-
-        response_json = response.json()
-        if "error" in response_json and response_json["error"]["type"] == 101:
-            # Need to press button
-            raise HueBridgeButtonNotPressedError(
-                "Please press the button on the Hue bridge with ip address "
-                f"'{discover_info.internalipaddress}'"
-            )
-        elif "success" in response_json:
-            # Now have a username and key
-            return models.HueBridgeInfo(
-                name=name,
-                ip_address=discover_info.internalipaddress,
-                identifier=discover_info.id,
-                username=response_json["username"],
-                client_key=response_json["clientkey"],
-            )
-
-        raise RuntimeError(
-            f"Failed to authenticate Hue bridge with ip '{discover_info.internalipaddress}'"
-        )
+        with HueBridgeSession(
+            connection_info=discover_info, ca_cert=ca_cert
+        ) as session:
+            conn = HueBridgeAPIConnection(session)
+            return conn.authenticate(name)
 
     @staticmethod
     def discover() -> list[HueBridgeDiscoverInfo]:
