@@ -4,7 +4,11 @@ from sqlalchemy.orm import Session
 
 from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.database.core import Database, DatabaseConnection
-from homecontrol_base.database.homecontrol_base.models import ACDeviceInfo, Base
+from homecontrol_base.database.homecontrol_base.models import (
+    ACDeviceInfo,
+    Base,
+    HueBridgeInfo,
+)
 from homecontrol_base.exceptions import DeviceNotFoundError
 
 
@@ -26,7 +30,7 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
         return device
 
     def get_ac_device(self, device_id: str) -> ACDeviceInfo:
-        """Returns ACDeviceInfo given an air conditioning unit's device ID
+        """Returns ACDeviceInfo given an air conditioning unit's device id
 
         Args:
             device_id (str): The ID of the air conditioning unit
@@ -50,10 +54,10 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
         return device_info
 
     def get_ac_device_by_name(self, device_name: str) -> ACDeviceInfo:
-        """Returns ACDeviceInfo given an air conditioning unit's device ID
+        """Returns ACDeviceInfo given an air conditioning unit's device id
 
         Args:
-            device_id (str): The ID of the air conditioning unit
+            device_name (str): The name of the air conditioning unit
 
         Returns:
             ACDeviceInfo: Info about the device
@@ -96,6 +100,85 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
             raise DeviceNotFoundError(
                 f"Air conditioning unit with id '{device_id}' was not found"
             )
+
+        self._session.commit()
+
+    """-------------------------- Hue bridges  --------------------------"""
+
+    def create_hue_bridge(self, bridge: HueBridgeInfo) -> HueBridgeInfo:
+        """Adds an HueBridgeInfo to the database"""
+        self._session.add(bridge)
+        self._session.commit()
+        self._session.refresh(bridge)
+        return bridge
+
+    def get_hue_bridge(self, bridge_id: str) -> HueBridgeInfo:
+        """Returns HueBridgeInfo given an Hue bridge's id
+
+        Args:
+            bridge_id (str): The ID of the Hue bridge
+
+        Returns:
+            HueBridgeInfo: Info about the device
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+
+        device_info = (
+            self._session.query(HueBridgeInfo)
+            .filter(HueBridgeInfo.id == UUID(bridge_id))
+            .first()
+        )
+        if not device_info:
+            raise DeviceNotFoundError(f"Hue bridge with id '{bridge_id}' was not found")
+        return device_info
+
+    def get_hue_bridge_by_name(self, bridge_name: str) -> HueBridgeInfo:
+        """Returns HueBridgeInfo given a Hue bridge's id
+
+        Args:
+            bridge_name (str): The name of the Hue bridge
+
+        Returns:
+            HueBridgeInfo: Info about the device
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+
+        device_info = (
+            self._session.query(HueBridgeInfo)
+            .filter(HueBridgeInfo.name == bridge_name)
+            .first()
+        )
+        if not device_info:
+            raise DeviceNotFoundError(
+                f"Hue bridge with name '{bridge_name}' was not found"
+            )
+        return device_info
+
+    def get_hue_bridges(self) -> list[HueBridgeInfo]:
+        """Returns a list of information about all Hue bridges"""
+        return self._session.query(HueBridgeInfo).all()
+
+    def delete_ac_device(self, bridge_id: str):
+        """Deletes an HueBridgeInfo given the Hue bridge's id
+
+        Args:
+            bridge_id (str): The ID of the Hue bridge
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+        rows_deleted = (
+            self._session.query(HueBridgeInfo)
+            .filter(HueBridgeInfo.id == UUID(bridge_id))
+            .delete()
+        )
+
+        if rows_deleted == 0:
+            raise DeviceNotFoundError(f"Hue bridge with id '{bridge_id}' was not found")
 
         self._session.commit()
 

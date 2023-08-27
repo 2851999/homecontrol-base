@@ -13,6 +13,16 @@ from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 class HueBridge:
     """Handles a Phillips Hue bridge"""
 
+    _bridge_info: models.HueBridgeInfo
+
+    def __init__(self, bridge_info: models.HueBridgeInfo) -> None:
+        """Constructor
+
+        Args:
+            bridge_info (models.HueBridgeInfo): Hue bridge connection info
+        """
+        self._bridge_info = bridge_info
+
     @staticmethod
     def authenticate(
         name: str, discover_info: HueBridgeDiscoverInfo, ca_cert: Path

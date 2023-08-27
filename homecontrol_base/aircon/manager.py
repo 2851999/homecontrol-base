@@ -11,7 +11,6 @@ class ACManager:
     """Manages a set of ACDevice instances"""
 
     _lazy_load: bool
-    _loaded_all: bool
 
     _midea_config: MideaConfig
     _devices: dict[str, ACDevice]
@@ -25,7 +24,6 @@ class ACManager:
                               devices immediately
         """
         self._lazy_load = lazy_load
-        self._loaded_all = False
         self._midea_config = MideaConfig()
         self._devices = {}
 
@@ -40,19 +38,19 @@ class ACManager:
         return device
 
     def _load_all(self):
+        """Loads all devices from the database"""
         with homecontrol_db.connect() as conn:
             devices = conn.get_ac_devices()
             for device_info in devices:
                 self._load_device(device_info)
-        self._loaded_all = True
 
     def get_device(self, device_id: str) -> ACDevice:
-        """Returns a device given it's id
+        """Returns a device given its id
 
         Attempts to load from the database if not already loaded
 
         Args:
-            device_id (str): The ID of the device to get
+            device_id (str): ID of the device to get
 
         Raises:
             DeviceNotFoundError: If the device isn't found
@@ -65,7 +63,7 @@ class ACManager:
         return device
 
     def get_device_by_name(self, device_name: str) -> ACDevice:
-        """Returns a device given it's name - slower than get_device
+        """Returns a device given its name - slower than get_device
 
         Attempts to load from the database if not already loaded
 
