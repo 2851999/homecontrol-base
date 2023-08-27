@@ -49,8 +49,8 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
                 ip_address=discover_info.internalipaddress,
                 port=discover_info.port,
                 identifier=discover_info.id,
-                username=response_json["username"],
-                client_key=response_json["clientkey"],
+                username=response_json["success"]["username"],
+                client_key=response_json["success"]["clientkey"],
             )
 
         raise RuntimeError(

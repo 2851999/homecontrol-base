@@ -1,9 +1,12 @@
+from typing import Callable
+
 from homecontrol_base.config.hue import HueConfig
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
 from homecontrol_base.hue.bridge import HueBridge
+from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 
 
@@ -91,3 +94,38 @@ class HueManager:
     def discover(self) -> list[HueBridgeDiscoverInfo]:
         """Attempts to discover all Hue bridges on the network"""
         return HueBridge.discover(self._hue_config.mDNS_discovery)
+
+    def discover_and_add_all_bridges(
+        self,
+        name_function: Callable[
+            [int, HueBridgeDiscoverInfo], str
+        ] = lambda i, discover_info: f"Bridge{i}",
+    ):
+        """Discovers and adds all bridges found on the network
+
+        This will pause by requiring input via command line to confirm
+        all buttons on the bridges have been pressed. Should only be
+        called once. (Utility method only)
+
+        Args:
+            name_function (Callable[[int], str]): Function that should
+                          return the name of a bridge given it's index
+                          and HueBridgeDiscoverInfo
+        """
+        # Find all available bridges
+        discovered_bridges = self.discover()
+        done = [False] * len(discovered_bridges)
+        while not all(done):
+            for index, discovered_bridge in enumerate(discovered_bridges):
+                if not done[index]:
+                    try:
+                        self.add_bridge(
+                            name_function(index, discovered_bridge), discovered_bridge
+                        )
+                        done[index] = True
+                    except HueBridgeButtonNotPressedError:
+                        pass
+            if not all(done):
+                input(
+                    "Please press the button on top of all your Hue bridge's and then press enter"
+                )

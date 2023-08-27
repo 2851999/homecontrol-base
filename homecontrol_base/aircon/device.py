@@ -152,9 +152,13 @@ class ACDevice:
             discovery = MideaDiscovery(
                 account=account.username, password=account.password, amount=1
             )
-            loop = asyncio.new_event_loop()
-            found_devices = loop.run_until_complete(discovery.get(ip_address))
-            loop.close()
+            # Try a max of 3 times
+            attempts = 0
+            while not found_devices and attempts < 3:
+                loop = asyncio.new_event_loop()
+                found_devices = loop.run_until_complete(discovery.get(ip_address))
+                loop.close()
+                attempts += 1
         except Exception as err:
             raise DeviceConnectionError(
                 "An error occurred while attempting to discover an air "

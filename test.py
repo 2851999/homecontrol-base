@@ -60,10 +60,33 @@ from homecontrol_base.hue.manager import HueManager
 # device = ac_manager.get_device("05e06c5f-a3db-4397-843a-e479e6a2a310")
 # print(device.get_state())
 
-hue_manager = HueManager()
-discovered_bridges = hue_manager.discover()
-while not bridge:
-    try:
-        bridge = hue_manager.add_bridge("Home", discovered_bridges[0])
-    except HueBridgeButtonNotPressedError as err:
-        input("Press enter once you have pressed the button on the Hue bridge")
+# hue_manager = HueManager()
+# discovered_bridges = hue_manager.discover()
+# while not bridge:
+#     try:
+#         bridge = hue_manager.add_bridge("Home", discovered_bridges[0])
+#     except HueBridgeButtonNotPressedError as err:
+#         input("Press enter once you have pressed the button on the Hue bridge")
+
+# hue_manager = HueManager()
+# hue_manager.discover_and_add_all_bridges()
+
+
+# homecontrol_db.create_tables()
+
+
+# def setup_ac():
+#     ac_manager = ACManager()
+#     ac_manager.add_device("Joel's Room", "192.168.1.77")
+#     ac_manager.add_device("Games Room", "192.168.1.85")
+#     ac_manager.add_device("Spare Room", "192.168.1.198")
+#     ac_manager.add_device("Mum's Room", "192.168.1.237")
+
+
+# def setup_hue():
+#     hue_manager = HueManager()
+#     hue_manager.discover_and_add_all_bridges()
+
+
+# setup_ac()
+# setup_hue()
