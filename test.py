@@ -1,3 +1,4 @@
+import time
 from typing import Union
 from pydantic import UUID4, BaseModel, field_validator
 from pydantic.dataclasses import dataclass
@@ -12,6 +13,7 @@ from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
 from homecontrol_base.hue.bridge import HueBridge
+from homecontrol_base.hue.discovery import discover_hue_bridges
 from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 
 #  config = MideaConfig()
@@ -26,7 +28,7 @@ from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 # Base.metadata.create_all(engine)
 
 
-homecontrol_db.create_tables()
+# homecontrol_db.create_tables()
 # with homecontrol_db.connect() as session:
 #     # print(session.create_ac_device(device))
 #     # session.delete_ac_device("6927f184-ba42-4ae9-b4f1-c4c975a2966b")
@@ -36,7 +38,7 @@ homecontrol_db.create_tables()
 #     state = device.get_state()
 #     print(state)
 
-ac_manager = ACManager()
+# ac_manager = ACManager()
 # ac_manager.add_device("Test", "192.168.1.85")
 
 
@@ -58,7 +60,7 @@ ac_manager = ACManager()
 # print(device.get_state())
 
 hue_config = HueConfig()
-bridges = HueBridge.discover()
+bridges = HueBridge.discover(hue_config.mDNS_discovery)
 auth_info = None
 while not auth_info:
     try:

@@ -5,14 +5,13 @@ from pydantic import TypeAdapter
 
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.connection import HueBridgeAPIConnection
+from homecontrol_base.hue.discovery import discover_hue_bridges
 from homecontrol_base.hue.session import HueBridgeSession
 from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 
 
 class HueBridge:
     """Handles a Phillips Hue bridge"""
-
-    DISCOVER_URL = "https://discovery.meethue.com/"
 
     @staticmethod
     def authenticate(
@@ -44,13 +43,12 @@ class HueBridge:
             return conn.authenticate(name)
 
     @staticmethod
-    def discover() -> list[HueBridgeDiscoverInfo]:
+    def discover(mDNS_discovery: bool) -> list[HueBridgeDiscoverInfo]:
         """Discovers all Phillip's Hue bridges that are available on the
-        current network"""
+        current network
 
-        response = requests.get(HueBridge.DISCOVER_URL)
-        response.raise_for_status()
-        bridges_dict = TypeAdapter(list[HueBridgeDiscoverInfo]).validate_python(
-            response.json()
-        )
-        return bridges_dict
+        Args:
+            mDNS_discovery (bool): Whether to use mDNS for discovery
+        """
+
+        return discover_hue_bridges(mDNS_discovery)

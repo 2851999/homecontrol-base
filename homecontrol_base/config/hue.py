@@ -10,6 +10,7 @@ class HueConfigData:
     """Phillips Hue config data"""
 
     ca_cert: Path
+    mDNS_discovery: bool  # Doesn't work on WSL for some reason (probably firewall related)
 
 
 class HueConfig(BaseConfig[HueConfigData]):
@@ -21,3 +22,7 @@ class HueConfig(BaseConfig[HueConfigData]):
     @property
     def ca_cert(self) -> Path:
         return self._data.ca_cert
+
+    @property
+    def mDNS_discovery(self) -> bool:
+        return self._data.mDNS_discovery
