@@ -7,6 +7,8 @@ from pydantic.dataclasses import dataclass
 from pydantic.json import pydantic_encoder
 
 from homecontrol_base.aircon.manager import ACManager
+from homecontrol_base.broadlink.manager import BroadlinkManager
+from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
@@ -20,7 +22,7 @@ from homecontrol_base.hue.api.schema import (
 )
 from homecontrol_base.hue.manager import HueManager
 
-homecontrol_db.create_tables()
+# homecontrol_db.create_tables()
 
 
 # def setup_ac():
@@ -36,8 +38,14 @@ homecontrol_db.create_tables()
 #     hue_manager.discover_and_add_all_bridges()
 
 
+# def setup_broadlink():
+#     broadlink_manager = BroadlinkManager()
+#     broadlink_manager.add_device("Mum's Room", "192.168.1.126")
+
+
 # setup_ac()
 # setup_hue()
+# setup_broadlink()
 
 # hue_manager = HueManager()
 # bridge = hue_manager.get_bridge_by_name("Bridge0")
@@ -115,3 +123,7 @@ homecontrol_db.create_tables()
 #     # )
 #     # print(conn.post_room(data))
 #     # print(conn.delete_room("5c61e8e8-bf18-471a-b393-b6f51fb2cbf3"))
+
+broadlink_manager = BroadlinkManager()
+device = broadlink_manager.get_device_by_name("Mum's Room")
+print(device)

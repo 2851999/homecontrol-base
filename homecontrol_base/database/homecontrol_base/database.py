@@ -246,11 +246,11 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
         """Returns a list of information about all Broadlink devices"""
         return self._session.query(BroadlinkDeviceInfo).all()
 
-    def delete_hue_bridge(self, device_id: str):
+    def delete_broadlink_device(self, device_id: str):
         """Deletes an BroadlinkDeviceInfo given the Broadlink device's id
 
         Args:
-            bridge_id (str): The ID of the Hue bridge
+            device_id (str): The ID of the Hue bridge
 
         Raises:
             DeviceNotFoundError: If the device isn't found

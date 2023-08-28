@@ -76,6 +76,7 @@ class HueManager:
         """Adds a Hue bridge
 
         Args:
+            name (str): Name to label the bridge
             discover_info (HueBridgeDiscoverInfo): Bridge info from discovery
 
         Raises:
