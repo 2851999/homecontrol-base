@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any, Generator, Generic, TypeVar
+from typing import Any, Generator, Generic, Type, TypeVar
 
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -32,13 +32,13 @@ class Database(Generic[TDatabaseConnection]):
     _engine: Engine
     _session_factory: Any
     _declarative_base: Any
-    _connection_type: TDatabaseConnection
+    _connection_type: Type[TDatabaseConnection]
 
     def __init__(
         self,
         name: str,
         declarative_base: Any,
-        connection_type: TDatabaseConnection,
+        connection_type: Type[TDatabaseConnection],
         config: DatabaseConfig,
     ) -> None:
         """Construct a database

@@ -35,8 +35,8 @@ hue_manager = HueManager()
 bridge = hue_manager.get_bridge_by_name("Bridge0")
 
 with bridge.connect_api() as conn:
-    data = conn._session.get("/clip/v2/resource/light").json()
-    print(TypeAdapter(list[LightGet]).validate_python(data["data"]))
+    lights = conn.get_lights()
+    print(len(lights))
 
 
 # @dataclass

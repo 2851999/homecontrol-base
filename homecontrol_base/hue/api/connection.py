@@ -1,7 +1,15 @@
+from typing import Type, TypeVar
+
+from pydantic import TypeAdapter
+
 from homecontrol_base.connection import BaseConnection
 from homecontrol_base.database.homecontrol_base import models
+from homecontrol_base.hue.api.exceptions import check_response_for_error
+from homecontrol_base.hue.api.schema import LightGet
 from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 from homecontrol_base.hue.session import HueBridgeSession
+
+T = TypeVar("T")
 
 
 class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
@@ -57,3 +65,21 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             "Failed to authenticate Hue bridge with ip "
             f"'{discover_info.internalipaddress}', Response: {response_json}"
         )
+
+    def _get_resource(self, endpoint: str, resource_type: Type[T]) -> T:
+        """Returns parsed data from a get request to an endpoint
+
+        Args:
+            endpoint (str): Endpoint to call
+            resource_type (Type[T]): Type to parse to using pydantic
+
+        Raises:
+            HTTPError: When there is an error in the response
+        """
+        response = self._session.get(url=endpoint)
+        check_response_for_error(response)
+        return TypeAdapter(resource_type).validate_python(response.json()["data"])
+
+    def get_lights(self) -> list[LightGet]:
+        """Returns a list of lights"""
+        return self._get_resource("/clip/v2/resource/light", list[LightGet])

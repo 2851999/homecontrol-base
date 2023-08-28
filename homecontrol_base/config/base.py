@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Generic, Optional, TypeVar
+from typing import Generic, Optional, Type, TypeVar
 
 from pydantic import RootModel
 from pydantic.dataclasses import dataclass
@@ -13,12 +13,12 @@ TDataclass = TypeVar("TDataclass", bound=dataclass)
 class BaseConfig(Generic[TDataclass]):
     """Base class for loading and saving config using pydantic"""
 
-    _dataclass_type: TDataclass
+    _dataclass_type: Type[TDataclass]
     _local_file_path: Path
     _loaded_file_path: Path
     _data: TDataclass
 
-    def __init__(self, local_file_path: str, dataclass_type: TDataclass) -> None:
+    def __init__(self, local_file_path: str, dataclass_type: Type[TDataclass]) -> None:
         """Initialises and loads a config file into memory
 
         Arguments
