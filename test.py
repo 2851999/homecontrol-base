@@ -9,7 +9,7 @@ from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
-from homecontrol_base.hue.api.schema import LightGet, LightPut
+from homecontrol_base.hue.api.schema import LightGet, LightPut, ScenePut
 from homecontrol_base.hue.manager import HueManager
 
 # homecontrol_db.create_tables()
@@ -47,7 +47,11 @@ with bridge.connect_api() as conn:
     # )
 
     # print(conn.get_scenes())
-    print(conn.get_scene("b711b49f-0bb7-4a9a-b730-2bc6ca29c450"))
+    # print(conn.get_scene("b711b49f-0bb7-4a9a-b730-2bc6ca29c450"))
+    # conn.put_scene(
+    #     "b711b49f-0bb7-4a9a-b730-2bc6ca29c450",
+    #     ScenePut(**{"recall": {"action": "active"}}),
+    # )
 
 
 # @dataclass

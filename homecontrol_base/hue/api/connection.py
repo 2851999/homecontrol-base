@@ -1,5 +1,5 @@
-from dataclasses import asdict, is_dataclass
 import json
+from dataclasses import asdict, is_dataclass
 from typing import Type, TypeVar
 
 from pydantic import TypeAdapter
@@ -7,7 +7,7 @@ from pydantic import TypeAdapter
 from homecontrol_base.connection import BaseConnection
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.exceptions import check_response_for_error
-from homecontrol_base.hue.api.schema import LightGet, LightPut, SceneGet
+from homecontrol_base.hue.api.schema import LightGet, LightPut, SceneGet, ScenePut
 from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 from homecontrol_base.hue.session import HueBridgeSession
 
@@ -127,3 +127,6 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         return self._get_resource(
             f"/clip/v2/resource/scene/{scene_id}", list[SceneGet]
         )[0]
+
+    def put_scene(self, scene_id, data: ScenePut):
+        self._put_resource(f"/clip/v2/resource/scene/{scene_id}", data)

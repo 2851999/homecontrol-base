@@ -401,3 +401,77 @@ class SceneGet:
     speed: float
     auto_dynamic: bool
     id_v1: Optional[str] = None
+
+
+# -------------------------------- ScenePut --------------------------------
+
+
+@dataclass
+class TargetPut:
+    rid: Optional[str] = None
+    rtype: Optional[str] = None
+
+
+@dataclass
+class DynamicsPutDuration:
+    duration: Optional[int] = None
+
+
+@dataclass
+class ActionActionPut:
+    on: Optional[OnPut] = None
+    dimming: Optional[DimmingPut] = None
+    color: Optional[ColorPut] = None
+    color_temperature: Optional[ColorTemperaturePut] = None
+    gradient: Optional[GradientPut] = None
+    effects: Optional[EffectsPut] = None
+    dynamics: Optional[DynamicsPutDuration] = None
+
+
+@dataclass
+class ActionPut:
+    target: TargetPut
+    action: ActionActionPut
+
+
+@dataclass
+class Recall:
+    action: Optional[Literal["active", "dynamic_palette", "static"]] = None
+    status: Optional[Literal["active", "dynamic_palette"]] = None
+    duration: Optional[int] = None
+    dimming: Optional[DimmingPut] = None
+
+
+@dataclass
+class MetadataPutName:
+    name: str
+
+
+@dataclass
+class ColorPalettePut:
+    color: ColorPut
+    dimming: DimmingPut
+
+
+@dataclass
+class ColorTemperaturePalettePut:
+    color_temperature: ColorTemperaturePut
+    dimming: DimmingPut
+
+
+@dataclass
+class PalettePut:
+    color: list[ColorPut]
+    dimming: list[DimmingPut]
+    color_temperature: list[ColorTemperaturePalettePut]
+
+
+@dataclass
+class ScenePut:
+    type: Optional[str] = None
+    action: Optional[list[ActionPut]] = None
+    recall: Optional[Recall] = None
+    metadata: Optional[MetadataPutName] = None
+    palette: Optional[PalettePut] = None
+    speed: Optional[float] = None
+    auto_dynamic: Optional[bool] = None
