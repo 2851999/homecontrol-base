@@ -20,7 +20,7 @@ from homecontrol_base.hue.api.schema import (
 )
 from homecontrol_base.hue.manager import HueManager
 
-# homecontrol_db.create_tables()
+homecontrol_db.create_tables()
 
 
 # def setup_ac():
@@ -39,107 +39,79 @@ from homecontrol_base.hue.manager import HueManager
 # setup_ac()
 # setup_hue()
 
-hue_manager = HueManager()
-bridge = hue_manager.get_bridge_by_name("Bridge0")
+# hue_manager = HueManager()
+# bridge = hue_manager.get_bridge_by_name("Bridge0")
 
-with bridge.connect_api() as conn:
-    # lights = conn.get_lights()
-    # for light in lights:
-    #     if light.on.on:
-    #         print(light.id)
+# with bridge.connect_api() as conn:
+#     # lights = conn.get_lights()
+#     # for light in lights:
+#     #     if light.on.on:
+#     #         print(light.id)
 
-    # light = conn.get_light("19954fc6-4d4a-46df-ba9f-da730bfa9f9f")
-    # print(light)
-    # conn.put_light(
-    #     "19954fc6-4d4a-46df-ba9f-da730bfa9f9f", LightPut(**{"on": {"on": False}})
-    # )
+#     # light = conn.get_light("19954fc6-4d4a-46df-ba9f-da730bfa9f9f")
+#     # print(light)
+#     # conn.put_light(
+#     #     "19954fc6-4d4a-46df-ba9f-da730bfa9f9f", LightPut(**{"on": {"on": False}})
+#     # )
 
-    # print(conn.get_scenes())
-    # print(conn.get_scene("b711b49f-0bb7-4a9a-b730-2bc6ca29c450"))
-    # conn.put_scene(
-    #     "b711b49f-0bb7-4a9a-b730-2bc6ca29c450",
-    #     ScenePut(**{"recall": {"action": "active"}}),
-    # )
-    # print(conn.get_rooms())
-    # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
-    # print(conn.get_grouped_lights())
-    # print(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
-    # print(
-    #     conn.put_grouped_light(
-    #         "42e245c4-ef2a-447c-9b55-0f657862b0ac",
-    #         GroupedLightPut(**{"on": {"on": False}}),
-    #     )
-    # )
+#     # print(conn.get_scenes())
+#     # print(conn.get_scene("b711b49f-0bb7-4a9a-b730-2bc6ca29c450"))
+#     # conn.put_scene(
+#     #     "b711b49f-0bb7-4a9a-b730-2bc6ca29c450",
+#     #     ScenePut(**{"recall": {"action": "active"}}),
+#     # )
+#     # print(conn.get_rooms())
+#     # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
+#     # print(conn.get_grouped_lights())
+#     # print(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
+#     # print(
+#     #     conn.put_grouped_light(
+#     #         "42e245c4-ef2a-447c-9b55-0f657862b0ac",
+#     #         GroupedLightPut(**{"on": {"on": False}}),
+#     #     )
+#     # )
 
-    # print(
-    #     json.dumps(
-    #         conn._session.get("/clip/v2/resource/behavior_script").json(), indent=4
-    #     )
-    # )
-    # print(
-    #     json.dumps(
-    #         conn._session.get("/clip/v2/resource/behavior_instance").json(), indent=4
-    #     )
-    # )
+#     # print(
+#     #     json.dumps(
+#     #         conn._session.get("/clip/v2/resource/behavior_script").json(), indent=4
+#     #     )
+#     # )
+#     # print(
+#     #     json.dumps(
+#     #         conn._session.get("/clip/v2/resource/behavior_instance").json(), indent=4
+#     #     )
+#     # )
 
-    # Need one action per light
-    # data = ScenePost(
-    #     **{
-    #         "actions": [
-    #             {
-    #                 "target": {
-    #                     "rid": "19954fc6-4d4a-46df-ba9f-da730bfa9f9f",
-    #                     "rtype": "light",
-    #                 },
-    #                 "action": {"on": {"on": True}},
-    #             },
-    #             {
-    #                 "target": {
-    #                     "rid": "9c76db66-26ad-43ee-b3b1-915be3060a4c",
-    #                     "rtype": "light",
-    #                 },
-    #                 "action": {
-    #                     "on": {"on": False},
-    #                 },
-    #             },
-    #         ],
-    #         "metadata": {"name": "Homecontrol"},
-    #         "group": {"rid": "e7e6883f-85ae-4d28-8dab-7b783445acad", "rtype": "room"},
-    #     }
-    # )
-    # print(conn.post_scene(data))
-    # print(conn.delete_scene("51e942ef-6fb4-4735-a1ac-efb1fd0b648f"))
+#     # Need one action per light
+#     # data = ScenePost(
+#     #     **{
+#     #         "actions": [
+#     #             {
+#     #                 "target": {
+#     #                     "rid": "19954fc6-4d4a-46df-ba9f-da730bfa9f9f",
+#     #                     "rtype": "light",
+#     #                 },
+#     #                 "action": {"on": {"on": True}},
+#     #             },
+#     #             {
+#     #                 "target": {
+#     #                     "rid": "9c76db66-26ad-43ee-b3b1-915be3060a4c",
+#     #                     "rtype": "light",
+#     #                 },
+#     #                 "action": {
+#     #                     "on": {"on": False},
+#     #                 },
+#     #             },
+#     #         ],
+#     #         "metadata": {"name": "Homecontrol"},
+#     #         "group": {"rid": "e7e6883f-85ae-4d28-8dab-7b783445acad", "rtype": "room"},
+#     #     }
+#     # )
+#     # print(conn.post_scene(data))
+#     # print(conn.delete_scene("51e942ef-6fb4-4735-a1ac-efb1fd0b648f"))
 
-    # data = RoomPost(
-    #     **{"children": [], "metadata": {"name": "TestRoom", "archetype": "man_cave"}}
-    # )
-    # print(conn.post_room(data))
-    print(conn.delete_room("5c61e8e8-bf18-471a-b393-b6f51fb2cbf3"))
-
-# @dataclass
-# class Test:
-#     test: str
-
-
-# data = {"test": "hello", "another": "test"}
-# print(Test(**data))
-
-
-# @dataclass
-# class Test2:
-#     on: Optional[bool] = None
-
-
-# @dataclass
-# class Test3:
-#     test1: Optional[str] = None
-#     on: Optional[Test2] = None
-
-
-# data = Test3()
-# # data = Test3(**{"on": {"on": True}})
-# data.test1 = "str"
-
-
-# print(asdict(data, dict_factory=lambda x: {k: v for (k, v) in x if v is not None}))
-# print(json.dumps(data, default=pydantic_encoder))
+#     # data = RoomPost(
+#     #     **{"children": [], "metadata": {"name": "TestRoom", "archetype": "man_cave"}}
+#     # )
+#     # print(conn.post_room(data))
+#     # print(conn.delete_room("5c61e8e8-bf18-471a-b393-b6f51fb2cbf3"))

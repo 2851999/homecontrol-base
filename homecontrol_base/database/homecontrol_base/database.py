@@ -7,6 +7,7 @@ from homecontrol_base.database.core import Database, DatabaseConnection
 from homecontrol_base.database.homecontrol_base.models import (
     ACDeviceInfo,
     Base,
+    BroadlinkDeviceInfo,
     HueBridgeInfo,
 )
 from homecontrol_base.exceptions import DeviceNotFoundError
@@ -135,7 +136,7 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
         return device_info
 
     def get_hue_bridge_by_name(self, bridge_name: str) -> HueBridgeInfo:
-        """Returns HueBridgeInfo given a Hue bridge's id
+        """Returns HueBridgeInfo given a Hue bridge's name
 
         Args:
             bridge_name (str): The name of the Hue bridge
@@ -162,14 +163,14 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
         """Returns a list of information about all Hue bridges"""
         return self._session.query(HueBridgeInfo).all()
 
-    def delete_ac_device(self, bridge_id: str):
+    def delete_hue_bridge(self, bridge_id: str):
         """Deletes an HueBridgeInfo given the Hue bridge's id
 
         Args:
             bridge_id (str): The ID of the Hue bridge
 
         Raises:
-            DeviceNotFoundError: If the device isn't found
+            DeviceNotFoundError: If the bridge isn't found
         """
         rows_deleted = (
             self._session.query(HueBridgeInfo)
@@ -179,6 +180,91 @@ class HomecontrolBaseDatabaseConnection(DatabaseConnection):
 
         if rows_deleted == 0:
             raise DeviceNotFoundError(f"Hue bridge with id '{bridge_id}' was not found")
+
+        self._session.commit()
+
+    """-------------------------- Broadlink devices  --------------------------"""
+
+    def create_broadlink_device(
+        self, device: BroadlinkDeviceInfo
+    ) -> BroadlinkDeviceInfo:
+        """Adds a BroadlinkDeviceInfo to the database"""
+        self._session.add(device)
+        self._session.commit()
+        self._session.refresh(device)
+        return device
+
+    def get_broadlink_device(self, device_id: str) -> BroadlinkDeviceInfo:
+        """Returns BroadlinkDeviceInfo given an Broadlink device's id
+
+        Args:
+            device_id (str): The ID of the device
+
+        Returns:
+            BroadlinkDeviceInfo: Info about the device
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+
+        device_info = (
+            self._session.query(BroadlinkDeviceInfo)
+            .filter(BroadlinkDeviceInfo.id == UUID(device_id))
+            .first()
+        )
+        if not device_info:
+            raise DeviceNotFoundError(
+                f"Broadlink device with id '{device_id}' was not found"
+            )
+        return device_info
+
+    def get_broadlink_device_by_name(self, device_name: str) -> BroadlinkDeviceInfo:
+        """Returns BroadlinkDeviceInfo given a Broadlink device's name
+
+        Args:
+            bridge_name (str): The name of the Hue bridge
+
+        Returns:
+            HueBridgeInfo: Info about the device
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+
+        device_info = (
+            self._session.query(BroadlinkDeviceInfo)
+            .filter(BroadlinkDeviceInfo.name == device_name)
+            .first()
+        )
+        if not device_info:
+            raise DeviceNotFoundError(
+                f"Broadlink device with name '{device_name}' was not found"
+            )
+        return device_info
+
+    def get_broadlink_devices(self) -> list[BroadlinkDeviceInfo]:
+        """Returns a list of information about all Broadlink devices"""
+        return self._session.query(BroadlinkDeviceInfo).all()
+
+    def delete_hue_bridge(self, device_id: str):
+        """Deletes an BroadlinkDeviceInfo given the Broadlink device's id
+
+        Args:
+            bridge_id (str): The ID of the Hue bridge
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+        """
+        rows_deleted = (
+            self._session.query(BroadlinkDeviceInfo)
+            .filter(BroadlinkDeviceInfo.id == UUID(device_id))
+            .delete()
+        )
+
+        if rows_deleted == 0:
+            raise DeviceNotFoundError(
+                f"Broadlink device with id '{device_id}' was not found"
+            )
 
         self._session.commit()
 

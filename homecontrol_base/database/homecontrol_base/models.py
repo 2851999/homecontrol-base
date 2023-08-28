@@ -27,3 +27,11 @@ class HueBridgeInfo(Base):
     identifier = Column(Integer)
     username = Column(String)
     client_key = Column(String)
+
+
+class BroadlinkDeviceInfo(Base):
+    __tablename__ = "broadlink_devices"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, unique=True, index=True)
+    ip_address = Column(String, unique=True)
