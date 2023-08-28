@@ -498,3 +498,23 @@ class RoomGet:
     services: list[ResourceIdentifierGet]
     metadata: RoomMetadataGet
     id_v1: Optional[str] = None
+
+
+# -------------------------------- RoomPut --------------------------------
+@dataclass
+class ResourceIdentifierPut:
+    rid: Optional[str] = None
+    rtype: Optional[str] = None
+
+
+@dataclass
+class RoomMetadataPut:
+    name: Optional[str] = None
+    archetype: Optional[str] = None
+
+
+@dataclass
+class RoomPut:
+    type: Optional[str] = None
+    children: Optional[list[ResourceIdentifierPut]] = None
+    metadata: Optional[RoomMetadataPut] = None

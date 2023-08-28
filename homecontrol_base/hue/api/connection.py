@@ -11,6 +11,7 @@ from homecontrol_base.hue.api.schema import (
     LightGet,
     LightPut,
     RoomGet,
+    RoomPut,
     SceneGet,
     ScenePut,
 )
@@ -143,3 +144,6 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
 
     def get_room(self, room_id: str) -> RoomGet:
         return self._get_resource(f"/clip/v2/resource/room/{room_id}", list[RoomGet])[0]
+
+    def put_room(self, room_id: str, data: RoomPut):
+        self._put_resource(f"/clip/v2/resource/room/{room_id}", data)
