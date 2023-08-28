@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, Integer, String, Uuid
+from sqlalchemy import BLOB, Column, Integer, String, Uuid
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -35,3 +35,11 @@ class BroadlinkDeviceInfo(Base):
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, unique=True, index=True)
     ip_address = Column(String, unique=True)
+
+
+class BroadlinkAction(Base):
+    __tablename__ = "broadlink_actions"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, unique=True, index=True)
+    payload = Column(BLOB)
