@@ -129,3 +129,4 @@ broadlink_manager = BroadlinkManager()
 # broadlink_manager.play_action(
 #     "d8d759d1-0e53-4aee-b9d1-9d172cf3c08e", "aa6aa93cfe0e450080b676a727f96f8e"
 # )
+# device = broadlink_manager.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e")

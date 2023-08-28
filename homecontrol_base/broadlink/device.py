@@ -1,6 +1,6 @@
 import time
 from typing import Optional
-from homecontrol_base.broadlink.exceptions import RecordTimeout
+from homecontrol_base.broadlink.exceptions import IncompatibleDeviceError, RecordTimeout
 from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
 from homecontrol_base.database.homecontrol_base import models
 import broadlink
@@ -41,8 +41,13 @@ class BroadlinkDevice:
             bytes: The IR packet
 
         Raises:
+            IncompatibleDeviceError: If the device is incompatible
             RecordTimeout: If the record times out
         """
+        if not isinstance(self._device, broadlink.device.rmmini):
+            raise IncompatibleDeviceError(
+                "Incompatible device for recording IR packets"
+            )
         # Start learning mode
         self._device.enter_learning()
 
@@ -73,7 +78,13 @@ class BroadlinkDevice:
 
         Args:
             packet (bytes): Packet to send
+
+        Raises:
+            IncompatibleDeviceError: If the device is incompatible
         """
+        if not isinstance(self._device, broadlink.device.rmmini):
+            raise IncompatibleDeviceError("Incompatible device for sending IR packets")
+
         self._device.send_data(packet)
 
     @staticmethod

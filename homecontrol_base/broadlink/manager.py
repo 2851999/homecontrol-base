@@ -94,6 +94,7 @@ class BroadlinkManager:
 
         Raises:
             DeviceNotFoundError: If the device isn't found
+            IncompatibleDeviceError: If the device is incompatible
             RecordTimeout: If the record times out
         """
         # Obtain from device
@@ -114,6 +115,7 @@ class BroadlinkManager:
 
         Raises:
             DeviceNotFoundError: If the device isn't found
+            IncompatibleDeviceError: If the device is incompatible
             ActionNotFoundError: If the action isn't found
         """
         # Obtain the action
