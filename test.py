@@ -52,6 +52,8 @@ with bridge.connect_api() as conn:
     #     "b711b49f-0bb7-4a9a-b730-2bc6ca29c450",
     #     ScenePut(**{"recall": {"action": "active"}}),
     # )
+    # print(conn.get_rooms())
+    print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
 
 
 # @dataclass

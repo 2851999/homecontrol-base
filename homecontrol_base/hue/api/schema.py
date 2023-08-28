@@ -475,3 +475,26 @@ class ScenePut:
     palette: Optional[PalettePut] = None
     speed: Optional[float] = None
     auto_dynamic: Optional[bool] = None
+
+
+# -------------------------------- RoomGet --------------------------------
+@dataclass
+class ResourceIdentifierGet:
+    rid: str
+    rtype: str
+
+
+@dataclass
+class RoomMetadataGet:
+    name: str
+    archetype: str
+
+
+@dataclass
+class RoomGet:
+    type: str
+    id: str
+    children: list[ResourceIdentifierGet]
+    services: list[ResourceIdentifierGet]
+    metadata: RoomMetadataGet
+    id_v1: Optional[str] = None
