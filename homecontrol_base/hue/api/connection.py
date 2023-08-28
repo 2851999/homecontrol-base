@@ -8,6 +8,8 @@ from homecontrol_base.connection import BaseConnection
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.exceptions import check_response_for_error
 from homecontrol_base.hue.api.schema import (
+    GroupedLightGet,
+    GroupedLightPut,
     LightGet,
     LightPut,
     RoomGet,
@@ -147,3 +149,17 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
 
     def put_room(self, room_id: str, data: RoomPut):
         self._put_resource(f"/clip/v2/resource/room/{room_id}", data)
+
+    # -------------------------------- GroupedLights --------------------------------
+    def get_grouped_lights(self) -> list[GroupedLightGet]:
+        return self._get_resource(
+            "/clip/v2/resource/grouped_light", list[GroupedLightGet]
+        )
+
+    def get_grouped_light(self, grouped_light_id: str) -> GroupedLightGet:
+        return self._get_resource(
+            f"/clip/v2/resource/grouped_light/{grouped_light_id}", list[GroupedLightGet]
+        )[0]
+
+    def put_grouped_light(self, grouped_light_id: str, data: GroupedLightPut):
+        self._put_resource(f"/clip/v2/resource/grouped_light/{grouped_light_id}", data)

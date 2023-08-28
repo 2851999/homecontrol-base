@@ -1,6 +1,7 @@
-from dataclasses import asdict
 import json
+from dataclasses import asdict
 from typing import Optional
+
 from pydantic import TypeAdapter, parse_obj_as
 from pydantic.dataclasses import dataclass
 from pydantic.json import pydantic_encoder
@@ -9,7 +10,12 @@ from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
-from homecontrol_base.hue.api.schema import LightGet, LightPut, ScenePut
+from homecontrol_base.hue.api.schema import (
+    GroupedLightPut,
+    LightGet,
+    LightPut,
+    ScenePut,
+)
 from homecontrol_base.hue.manager import HueManager
 
 # homecontrol_db.create_tables()
@@ -53,7 +59,12 @@ with bridge.connect_api() as conn:
     #     ScenePut(**{"recall": {"action": "active"}}),
     # )
     # print(conn.get_rooms())
-    print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
+    # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
+    # print(conn.get_grouped_lights())
+    # print(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
+    conn.put_grouped_light(
+        "42e245c4-ef2a-447c-9b55-0f657862b0ac", GroupedLightPut(**{"on": {"on": False}})
+    )
 
 
 # @dataclass

@@ -158,12 +158,12 @@ class PowerupGet:
 
 @dataclass
 class LightGet:
-    type: str
     id: str
     owner: OwnerGet
     # metadata - deprecated
     on: OnGet
     mode: Literal["normal", "streaming"]
+    type: Optional[str] = None
     id_v1: Optional[str] = None
     dimming: Optional[DimmingGet] = None
     color_temperature: Optional[ColorTemperatureGet] = None
@@ -392,7 +392,6 @@ class PaletteGet:
 
 @dataclass
 class SceneGet:
-    type: str
     id: str
     actions: list[ActionGet]
     metadata: MetadataGet
@@ -400,6 +399,7 @@ class SceneGet:
     palette: Optional[PaletteGet]
     speed: float
     auto_dynamic: bool
+    type: Optional[str] = None
     id_v1: Optional[str] = None
 
 
@@ -492,11 +492,11 @@ class RoomMetadataGet:
 
 @dataclass
 class RoomGet:
-    type: str
     id: str
     children: list[ResourceIdentifierGet]
     services: list[ResourceIdentifierGet]
     metadata: RoomMetadataGet
+    type: Optional[str] = None
     id_v1: Optional[str] = None
 
 
@@ -518,3 +518,33 @@ class RoomPut:
     type: Optional[str] = None
     children: Optional[list[ResourceIdentifierPut]] = None
     metadata: Optional[RoomMetadataPut] = None
+
+
+# -------------------------------- GroupedLightGet --------------------------------
+
+
+@dataclass
+class GroupedLightGet:
+    id: str
+    owner: OwnerGet
+    type: Optional[str] = None
+    id_v1: Optional[str] = None
+    on: Optional[OnGet] = None
+    dimming: Optional[DimmingGetBrightness] = None
+    alert: Optional[AlertGet] = None
+
+
+# -------------------------------- GroupedLightPut --------------------------------
+
+
+@dataclass
+class GroupedLightPut:
+    type: Optional[str] = None
+    on: Optional[OnPut] = None
+    dimming: Optional[DimmingPut] = None
+    dimming_delta: Optional[DimmingDeltaPut] = None
+    color_temperature: Optional[ColorTemperaturePut] = None
+    color_temperature_delta: Optional[ColorTemperatureDeltaPut] = None
+    color: Optional[ColorPut] = None
+    alert: Optional[AlertPut] = None
+    dynamics: Optional[DynamicsPutDuration] = None
