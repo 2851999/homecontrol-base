@@ -3,6 +3,9 @@ from typing import Literal, Optional
 from pydantic.dataclasses import dataclass
 
 
+# -------------------------------- LightGet --------------------------------
+
+
 @dataclass
 class OwnerGet:
     rid: str
@@ -90,7 +93,9 @@ class GradientPointGet:
 @dataclass
 class GradientGet:
     points: list[GradientPointGet]
-    mode: str  # Literal["interpolated_palette", "interpolated_palette_mirrored", "random_pixelated"]
+    mode: Literal[
+        "interpolated_palette", "interpolated_palette_mirrored", "random_pixelated"
+    ]
     points_capable: int
     mode_values: list[str]
     pixel_count: Optional[int] = None
@@ -99,23 +104,23 @@ class GradientGet:
 @dataclass
 class EffectsGet:
     status_values: list[str]
-    status: str  # Literal["sparkle", "fire", "candle", "no_effect"]
+    status: Literal["sparkle", "fire", "candle", "no_effect"]
     effect_values: list[str]
-    effect: Optional[str] = None  # Literal["sparkle", "fire", "candle", "no_effect"]
+    effect: Optional[Literal["sparkle", "fire", "candle", "no_effect"]] = None
 
 
 @dataclass
 class TimedEffectsGet:
-    effect: str  # Literal["sunrise", "no_effect"]
+    effect: Literal["sunrise", "no_effect"]
     status_values: list[str]
-    status: str  # Literal["sunrise", "no_effect"]
+    status: Literal["sunrise", "no_effect"]
     effect_values: list[str]
     duration: Optional[int] = None
 
 
 @dataclass
 class PowerupOnGet:
-    mode: str  # Literal["on", "toggle", "previous"]
+    mode: Literal["on", "toggle", "previous"]
     on: Optional[OnGet] = None
 
 
@@ -126,7 +131,7 @@ class PowerupDimmingDimmingGet:
 
 @dataclass
 class PowerupDimmingGet:
-    mode: str  # Literal["dimming", "previous"]
+    mode: Literal["dimming", "previous"]
     dimming: Optional[PowerupDimmingDimmingGet] = None
 
 
@@ -142,14 +147,14 @@ class PowerupColorColorGet:
 
 @dataclass
 class PowerupColorGet:
-    mode: str  # Literal["color_temperature", "color", "previous"]
+    mode: Literal["color_temperature", "color", "previous"]
     color_temperature: Optional[PowerupColorTemperatureGet] = None
     color: Optional[PowerupColorColorGet] = None
 
 
 @dataclass
 class PowerupGet:
-    preset: str  # Literal["safety", "powerfail", "last_on_state", "custom"]
+    preset: Literal["safety", "powerfail", "last_on_state", "custom"]
     configured: bool
     on: PowerupOnGet
     dimming: Optional[PowerupDimmingGet] = None
@@ -163,7 +168,7 @@ class LightGet:
     owner: OwnerGet
     # metadata - deprecated
     on: OnGet
-    mode: str  # Literal["normal", "streaming"]
+    mode: Literal["normal", "streaming"]
     id_v1: Optional[str] = None
     dimming: Optional[DimmingGet] = None
     color_temperature: Optional[ColorTemperatureGet] = None
@@ -175,3 +180,135 @@ class LightGet:
     effects: Optional[EffectsGet] = None
     timed_effects: Optional[TimedEffectsGet] = None
     powerup: Optional[PowerupGet] = None
+
+
+# -------------------------------- LightPut --------------------------------
+
+
+@dataclass
+class MetadataPut:
+    name: Optional[str] = None
+    archetype: Optional[str] = None
+
+
+@dataclass
+class OnPut:
+    on: Optional[bool] = None
+
+
+@dataclass
+class DimmingPut:
+    brightness: Optional[float] = None
+
+
+@dataclass
+class DimmingDeltaPut:
+    action: Literal["up", "down", "stop"]
+    brightness_delta: Optional[float] = None
+
+
+@dataclass
+class ColorTemperaturePut:
+    mirek: Optional[int] = None
+
+
+@dataclass
+class ColorTemperatureDeltaPut:
+    action: Literal["up", "down", "stop"]
+    mirek_delta: Optional[int]
+
+
+@dataclass
+class XYPut:
+    x: float
+    y: float
+
+
+@dataclass
+class ColorPut:
+    xy: Optional[XYPut] = None
+
+
+@dataclass
+class DynamicsPut:
+    duration: Optional[int] = None
+    speed: Optional[float] = None
+
+
+@dataclass
+class AlertPut:
+    action: str
+
+
+@dataclass
+class GradientPointPut:
+    color: ColorPut
+
+
+@dataclass
+class GradientPut:
+    points: list[GradientPointPut]
+    mode: Literal[
+        "interpolated_palette", "interpolated_palette_mirrored", "random_pixelated"
+    ]
+
+
+@dataclass
+class EffectsPut:
+    effect: Optional[Literal["sparkle", "fire", "candle", "no_effect"]] = None
+
+
+@dataclass
+class TimedEffectsPut:
+    effect: Optional[Literal["sunrise", "no_effect"]] = None
+    duration: Optional[int] = None
+
+
+@dataclass
+class PowerupOnPut:
+    mode: Literal["on", "toggle", "previous"]
+    on: Optional[OnPut] = None
+
+
+@dataclass
+class PowerupDimmingDimmingPut:
+    brightness: Optional[float] = None
+
+
+@dataclass
+class PowerupDimmingPut:
+    mode: Literal["dimming", "previous"]
+    dimming: Optional[PowerupDimmingDimmingPut] = None
+
+
+@dataclass
+class PowerupColorPut:
+    mode: Literal["color_temperature", "color", "previous"]
+    color_temperature: Optional[ColorTemperaturePut] = None
+    color: Optional[ColorPut] = None
+
+
+@dataclass
+class PowerupPut:
+    preset: Literal["safety", "powerfail", "last_on_state", "custom"]
+    on: Optional[PowerupOnPut] = None
+    dimming: Optional[PowerupDimmingPut] = None
+    color: Optional[PowerupColorPut] = None
+
+
+@dataclass
+class LightPut:
+    type: Optional[str] = None
+    metadata: Optional[MetadataPut] = None
+    on: Optional[OnPut] = None
+    dimming: Optional[DimmingPut] = None
+    dimming_delta: Optional[DimmingDeltaPut] = None
+    color_temperature: Optional[ColorTemperaturePut] = None
+    color_temperature_delta: Optional[ColorTemperatureDeltaPut] = None
+    color: Optional[ColorPut] = None
+    dynamics: Optional[DynamicsPut] = None
+    alert: Optional[AlertPut] = None
+    gradient: Optional[GradientPut] = None
+    effects: Optional[EffectsPut] = None
+    timed_effects: Optional[TimedEffectsPut] = None
+    powerup: Optional[PowerupPut] = None

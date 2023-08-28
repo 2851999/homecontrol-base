@@ -9,7 +9,7 @@ from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
-from homecontrol_base.hue.api.schema import LightGet
+from homecontrol_base.hue.api.schema import LightGet, LightPut
 from homecontrol_base.hue.manager import HueManager
 
 # homecontrol_db.create_tables()
@@ -35,8 +35,16 @@ hue_manager = HueManager()
 bridge = hue_manager.get_bridge_by_name("Bridge0")
 
 with bridge.connect_api() as conn:
-    lights = conn.get_lights()
-    print(len(lights))
+    # lights = conn.get_lights()
+    # for light in lights:
+    #     if light.on.on:
+    #         print(light.id)
+
+    # light = conn.get_light("19954fc6-4d4a-46df-ba9f-da730bfa9f9f")
+    # print(light)
+    conn.put_light(
+        "19954fc6-4d4a-46df-ba9f-da730bfa9f9f", LightPut(**{"on": {"on": False}})
+    )
 
 
 # @dataclass

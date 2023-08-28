@@ -24,7 +24,7 @@ def check_response_for_error(response: Response):
         except JSONDecodeError:
             pass
 
-        if error_messages is not None:
+        if error_messages:
             raise HTTPError(
                 f"{response.status_code} error for url {response.url}"
                 f"Error messages:\n"

@@ -1,3 +1,5 @@
+from dataclasses import asdict, is_dataclass
+import json
 from typing import Type, TypeVar
 
 from pydantic import TypeAdapter
@@ -5,7 +7,7 @@ from pydantic import TypeAdapter
 from homecontrol_base.connection import BaseConnection
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.exceptions import check_response_for_error
-from homecontrol_base.hue.api.schema import LightGet
+from homecontrol_base.hue.api.schema import LightGet, LightPut
 from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 from homecontrol_base.hue.session import HueBridgeSession
 
@@ -80,6 +82,36 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         check_response_for_error(response)
         return TypeAdapter(resource_type).validate_python(response.json()["data"])
 
+    def _put_resource(self, endpoint: str, resource: T):
+        """Put request of a resource to an endpoint
+
+        Args:
+            endpoint (str): Endpoint to call
+            resource (T): Resource to put (Should be a dataclass that will be
+                          converted - all values of None will be ignored)
+
+        Raises:
+            HTTPError: When there is an error in the response
+        """
+
+        if is_dataclass(resource):
+            # Convert data
+            data = asdict(
+                resource, dict_factory=lambda x: {k: v for (k, v) in x if v is not None}
+            )
+        else:
+            raise RuntimeError("Invalid resource type, should be a dataclass")
+
+        response = self._session.put(url=endpoint, json=data)
+        check_response_for_error(response)
+
     def get_lights(self) -> list[LightGet]:
-        """Returns a list of lights"""
         return self._get_resource("/clip/v2/resource/light", list[LightGet])
+
+    def get_light(self, light_id: str) -> LightGet:
+        return self._get_resource(
+            f"/clip/v2/resource/light/{light_id}", list[LightGet]
+        )[0]
+
+    def put_light(self, light_id: str, data: LightPut):
+        self._put_resource(f"/clip/v2/resource/light/{light_id}", data)
