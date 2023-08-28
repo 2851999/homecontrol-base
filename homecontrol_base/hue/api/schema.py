@@ -81,13 +81,13 @@ class SignalingGet:
 
 
 @dataclass
-class GradientColorGet:
+class ColorGetXY:
     xy: XYGet
 
 
 @dataclass
 class GradientPointGet:
-    color: GradientColorGet
+    color: ColorGetXY
 
 
 @dataclass
@@ -125,31 +125,26 @@ class PowerupOnGet:
 
 
 @dataclass
-class PowerupDimmingDimmingGet:
+class DimmingGetBrightness:
     brightness: float
 
 
 @dataclass
 class PowerupDimmingGet:
     mode: Literal["dimming", "previous"]
-    dimming: Optional[PowerupDimmingDimmingGet] = None
+    dimming: Optional[DimmingGetBrightness] = None
 
 
 @dataclass
-class PowerupColorTemperatureGet:
+class ColorTemperatureGetMirek:
     mirek: int
-
-
-@dataclass
-class PowerupColorColorGet:
-    xy: XYGet
 
 
 @dataclass
 class PowerupColorGet:
     mode: Literal["color_temperature", "color", "previous"]
-    color_temperature: Optional[PowerupColorTemperatureGet] = None
-    color: Optional[PowerupColorColorGet] = None
+    color_temperature: Optional[ColorTemperatureGetMirek] = None
+    color: Optional[ColorGetXY] = None
 
 
 @dataclass
@@ -312,3 +307,97 @@ class LightPut:
     effects: Optional[EffectsPut] = None
     timed_effects: Optional[TimedEffectsPut] = None
     powerup: Optional[PowerupPut] = None
+
+
+# -------------------------------- SceneGet --------------------------------
+
+
+@dataclass
+class ActionTargetGet:
+    rid: str
+    rtype: str
+
+
+@dataclass
+class ActionActionGradientGet:
+    points: list[GradientPointGet]
+    mode: Literal[
+        "interpolated_palette", "interpolated_palette_mirrored", "random_pixelated"
+    ]
+
+
+@dataclass
+class ActionActionEffectsGet:
+    effect: Literal["sparkle", "fire", "candle", "no_effect"]
+
+
+@dataclass
+class ActionActionDynamicsGet:
+    duration: int
+
+
+@dataclass
+class ActionActionGet:
+    on: Optional[OnGet] = None
+    dimming: Optional[DimmingGetBrightness] = None
+    color: Optional[ColorGetXY] = None
+    color_temperature: Optional[ColorTemperatureGetMirek] = None
+    gradient: Optional[ActionActionGradientGet] = None
+    effects: Optional[ActionActionEffectsGet] = None
+    dynamics: Optional[ActionActionDynamicsGet] = None
+
+
+@dataclass
+class ActionGet:
+    target: ActionTargetGet
+    action: ActionActionGet
+
+
+@dataclass
+class MetadataImageGet:
+    rid: str
+    rtype: str
+
+
+@dataclass
+class MetadataGet:
+    name: str
+    image: Optional[MetadataImageGet] = None
+
+
+@dataclass
+class GroupGet:
+    rid: str
+    rtype: str
+
+
+@dataclass
+class ColorPaletteGet:
+    color: ColorGetXY
+    dimming: DimmingGetBrightness
+
+
+@dataclass
+class ColorTemperaturePaletteGet:
+    color_temperature: ColorTemperatureGetMirek
+    dimming: DimmingGetBrightness
+
+
+@dataclass
+class PaletteGet:
+    color: list[ColorPaletteGet]
+    dimming: list[DimmingGetBrightness]
+    color_temperature: list[ColorTemperaturePaletteGet]
+
+
+@dataclass
+class SceneGet:
+    type: str
+    id: str
+    actions: list[ActionGet]
+    metadata: MetadataGet
+    group: GroupGet
+    palette: Optional[PaletteGet]
+    speed: float
+    auto_dynamic: bool
+    id_v1: Optional[str] = None

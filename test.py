@@ -42,9 +42,12 @@ with bridge.connect_api() as conn:
 
     # light = conn.get_light("19954fc6-4d4a-46df-ba9f-da730bfa9f9f")
     # print(light)
-    conn.put_light(
-        "19954fc6-4d4a-46df-ba9f-da730bfa9f9f", LightPut(**{"on": {"on": False}})
-    )
+    # conn.put_light(
+    #     "19954fc6-4d4a-46df-ba9f-da730bfa9f9f", LightPut(**{"on": {"on": False}})
+    # )
+
+    # print(conn.get_scenes())
+    print(conn.get_scene("b711b49f-0bb7-4a9a-b730-2bc6ca29c450"))
 
 
 # @dataclass

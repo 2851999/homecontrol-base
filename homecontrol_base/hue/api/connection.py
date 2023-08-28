@@ -7,7 +7,7 @@ from pydantic import TypeAdapter
 from homecontrol_base.connection import BaseConnection
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.exceptions import check_response_for_error
-from homecontrol_base.hue.api.schema import LightGet, LightPut
+from homecontrol_base.hue.api.schema import LightGet, LightPut, SceneGet
 from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
 from homecontrol_base.hue.session import HueBridgeSession
 
@@ -105,6 +105,8 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         response = self._session.put(url=endpoint, json=data)
         check_response_for_error(response)
 
+    # -------------------------------- Lights --------------------------------
+
     def get_lights(self) -> list[LightGet]:
         return self._get_resource("/clip/v2/resource/light", list[LightGet])
 
@@ -115,3 +117,13 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
 
     def put_light(self, light_id: str, data: LightPut):
         self._put_resource(f"/clip/v2/resource/light/{light_id}", data)
+
+    # -------------------------------- Scenes --------------------------------
+
+    def get_scenes(self) -> list[SceneGet]:
+        return self._get_resource("/clip/v2/resource/scene", list[SceneGet])
+
+    def get_scene(self, scene_id: str):
+        return self._get_resource(
+            f"/clip/v2/resource/scene/{scene_id}", list[SceneGet]
+        )[0]
