@@ -83,3 +83,41 @@ class BroadlinkManager:
         with homecontrol_db.connect() as conn:
             device_info = conn.create_broadlink_device(device_info)
         return self._load_device(device_info)
+
+    def record_action(self, device_id: str, name: str) -> models.BroadlinkAction:
+        """Records an action from a Broadlink device and saves it to the
+        database
+
+        Args:
+            device_id (str): ID of the device to record the action on
+            name (str): Name to label the action
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+            RecordTimeout: If the record times out
+        """
+        # Obtain from device
+        packet = self.get_device(device_id).record_ir_packet()
+
+        # Save to database
+        action = models.BroadlinkAction(name=name, packet=packet)
+        with homecontrol_db.connect() as conn:
+            action = conn.create_broadlink_action(action)
+        return action
+
+    def play_action(self, device_id: str, action_id: str):
+        """Plays an action on a Broadlink device
+
+        Args:
+            device_id (str): ID of the device to playback the action on
+            action_id (str): ID of the action to playback
+
+        Raises:
+            DeviceNotFoundError: If the device isn't found
+            ActionNotFoundError: If the action isn't found
+        """
+        # Obtain the action
+        with homecontrol_db.connect() as conn:
+            action = conn.get_broadlink_action(action_id)
+        # Playback
+        self.get_device(device_id).send_ir_packet(action.packet)

@@ -22,7 +22,7 @@ from homecontrol_base.hue.api.schema import (
 )
 from homecontrol_base.hue.manager import HueManager
 
-# homecontrol_db.create_tables()
+homecontrol_db.create_tables()
 
 
 # def setup_ac():
@@ -125,5 +125,7 @@ from homecontrol_base.hue.manager import HueManager
 #     # print(conn.delete_room("5c61e8e8-bf18-471a-b393-b6f51fb2cbf3"))
 
 broadlink_manager = BroadlinkManager()
-device = broadlink_manager.get_device_by_name("Mum's Room")
-print(device)
+# print(broadlink_manager.record_action("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e", "Test1").id)
+# broadlink_manager.play_action(
+#     "d8d759d1-0e53-4aee-b9d1-9d172cf3c08e", "aa6aa93cfe0e450080b676a727f96f8e"
+# )
