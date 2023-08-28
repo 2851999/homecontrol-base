@@ -3,6 +3,12 @@ from typing import Literal, Optional
 from pydantic.dataclasses import dataclass
 
 
+@dataclass
+class ResourceIdentifierPutPostDelete:
+    rid: str
+    rtype: str
+
+
 # -------------------------------- LightGet --------------------------------
 
 
@@ -473,6 +479,131 @@ class ScenePut:
     recall: Optional[Recall] = None
     metadata: Optional[MetadataPutName] = None
     palette: Optional[PalettePut] = None
+    speed: Optional[float] = None
+    auto_dynamic: Optional[bool] = None
+
+
+# -------------------------------- ScenePost --------------------------------
+
+
+@dataclass
+class TargetPost:
+    rid: Optional[str] = None
+    rtype: Optional[str] = None
+
+
+@dataclass
+class OnPost:
+    on: bool
+
+
+@dataclass
+class DimmingPost:
+    brightness: float
+
+
+@dataclass
+class XYPost:
+    x: float
+    y: float
+
+
+@dataclass
+class ColorPost:
+    xy: XYPost
+
+
+@dataclass
+class ColorTemperaturePost:
+    mirek: int
+
+
+@dataclass
+class GradientPointPost:
+    color: ColorPost
+
+
+@dataclass
+class GradientPost:
+    points: list[GradientPointPost]
+    mode: Optional[
+        Literal[
+            "interpolated_palette", "interpolated_palette_mirrored", "random_pixelated"
+        ]
+    ] = None
+
+
+@dataclass
+class EffectsPost:
+    effect: Optional[Literal["sparkle", "fire", "no_effect"]] = None
+
+
+@dataclass
+class DynamicsPost:
+    duration: Optional[int] = None
+
+
+@dataclass
+class ActionPost:
+    on: Optional[OnPost] = None
+    dimming: Optional[DimmingPost] = None
+    color: Optional[ColorPost] = None
+    color_temperature: Optional[ColorTemperaturePost] = None
+    gradient: Optional[GradientPost] = None
+    effects: Optional[EffectsPost] = None
+    dynamics: Optional[DynamicsPost] = None
+
+
+@dataclass
+class ActionPost:
+    target: TargetPost
+    action: ActionPost
+
+
+@dataclass
+class ImagePost:
+    rid: Optional[str] = None
+    rtype: Optional[str] = None
+
+
+@dataclass
+class MetadataPost:
+    name: str
+    image: Optional[ImagePost] = None
+
+
+@dataclass
+class SceneGroupPost:
+    rid: Optional[str] = None
+    rtype: Optional[str] = None
+
+
+@dataclass
+class ColorPalettePost:
+    color: ColorPost
+    dimming: DimmingPost
+
+
+@dataclass
+class ColorTemperaturePalettePost:
+    color_temperature: ColorTemperaturePost
+    dimming: DimmingPost
+
+
+@dataclass
+class PalettePost:
+    color: list[ColorPalettePost]
+    dimming: list[DimmingPost]
+    color_temperature: list[ColorTemperaturePalettePost]
+
+
+@dataclass
+class ScenePost:
+    actions: list[ActionPost]
+    metadata: MetadataPost
+    group: SceneGroupPost
+    type: Literal["scene"] = "scene"
+    palette: Optional[PalettePost] = None
     speed: Optional[float] = None
     auto_dynamic: Optional[bool] = None
 

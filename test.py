@@ -14,6 +14,7 @@ from homecontrol_base.hue.api.schema import (
     GroupedLightPut,
     LightGet,
     LightPut,
+    ScenePost,
     ScenePut,
 )
 from homecontrol_base.hue.manager import HueManager
@@ -62,8 +63,11 @@ with bridge.connect_api() as conn:
     # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
     # print(conn.get_grouped_lights())
     # print(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
-    # conn.put_grouped_light(
-    #     "42e245c4-ef2a-447c-9b55-0f657862b0ac", GroupedLightPut(**{"on": {"on": False}})
+    # print(
+    #     conn.put_grouped_light(
+    #         "42e245c4-ef2a-447c-9b55-0f657862b0ac",
+    #         GroupedLightPut(**{"on": {"on": False}}),
+    #     )
     # )
 
     # print(
@@ -77,6 +81,33 @@ with bridge.connect_api() as conn:
     #     )
     # )
 
+    # Need one action per light
+    # data = ScenePost(
+    #     **{
+    #         "actions": [
+    #             {
+    #                 "target": {
+    #                     "rid": "19954fc6-4d4a-46df-ba9f-da730bfa9f9f",
+    #                     "rtype": "light",
+    #                 },
+    #                 "action": {"on": {"on": True}},
+    #             },
+    #             {
+    #                 "target": {
+    #                     "rid": "9c76db66-26ad-43ee-b3b1-915be3060a4c",
+    #                     "rtype": "light",
+    #                 },
+    #                 "action": {
+    #                     "on": {"on": False},
+    #                 },
+    #             },
+    #         ],
+    #         "metadata": {"name": "Homecontrol"},
+    #         "group": {"rid": "e7e6883f-85ae-4d28-8dab-7b783445acad", "rtype": "room"},
+    #     }
+    # )
+    # print(conn.post_scene(data))
+    print(conn.delete_scene("51e942ef-6fb4-4735-a1ac-efb1fd0b648f"))
 
 # @dataclass
 # class Test:
