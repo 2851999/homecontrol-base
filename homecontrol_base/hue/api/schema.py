@@ -4,7 +4,7 @@ from pydantic.dataclasses import dataclass
 
 
 @dataclass
-class ResourceIdentifierPutPostDelete:
+class ResourceIdentifierDelete:
     rid: str
     rtype: str
 
@@ -649,6 +649,28 @@ class RoomPut:
     type: Optional[Literal["room"]] = None
     children: Optional[list[ResourceIdentifierPut]] = None
     metadata: Optional[RoomMetadataPut] = None
+
+
+# -------------------------------- RoomPost --------------------------------
+
+
+@dataclass
+class ResourceIdentifierPost:
+    rid: Optional[str] = None
+    rtype: Optional[str] = None
+
+
+@dataclass
+class RoomMetadataPost:
+    name: Optional[str] = None
+    archetype: Optional[str] = None
+
+
+@dataclass
+class RoomPost:
+    children: list[ResourceIdentifierPost]
+    metadata: RoomMetadataPost
+    type: Literal["room"] = "room"
 
 
 # -------------------------------- GroupedLightGet --------------------------------

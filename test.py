@@ -14,6 +14,7 @@ from homecontrol_base.hue.api.schema import (
     GroupedLightPut,
     LightGet,
     LightPut,
+    RoomPost,
     ScenePost,
     ScenePut,
 )
@@ -107,7 +108,13 @@ with bridge.connect_api() as conn:
     #     }
     # )
     # print(conn.post_scene(data))
-    print(conn.delete_scene("51e942ef-6fb4-4735-a1ac-efb1fd0b648f"))
+    # print(conn.delete_scene("51e942ef-6fb4-4735-a1ac-efb1fd0b648f"))
+
+    # data = RoomPost(
+    #     **{"children": [], "metadata": {"name": "TestRoom", "archetype": "man_cave"}}
+    # )
+    # print(conn.post_room(data))
+    print(conn.delete_room("5c61e8e8-bf18-471a-b393-b6f51fb2cbf3"))
 
 # @dataclass
 # class Test:

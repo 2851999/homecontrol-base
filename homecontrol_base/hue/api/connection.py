@@ -12,8 +12,11 @@ from homecontrol_base.hue.api.schema import (
     GroupedLightPut,
     LightGet,
     LightPut,
-    ResourceIdentifierPutPostDelete,
+    ResourceIdentifierDelete,
+    ResourceIdentifierPost,
+    ResourceIdentifierPut,
     RoomGet,
+    RoomPost,
     RoomPut,
     SceneGet,
     ScenePost,
@@ -93,7 +96,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         check_response_for_error(response)
         return TypeAdapter(resource_type).validate_python(response.json()["data"])
 
-    def _convert_resource_to_dict(resource: T) -> dict:
+    def _convert_resource_to_dict(self, resource: T) -> dict:
         """Converts a resource (dataclass) into a dictionary
 
         All values of None will be ignored
@@ -115,9 +118,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         else:
             raise TypeError("Invalid resource type, should be a dataclass")
 
-    def _put_resource(
-        self, endpoint: str, resource: T
-    ) -> ResourceIdentifierPutPostDelete:
+    def _put_resource(self, endpoint: str, resource: T) -> ResourceIdentifierPut:
         """Put request of a resource to an endpoint
 
         Args:
@@ -135,13 +136,11 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             json=self._convert_resource_to_dict(resource),
         )
         check_response_for_error(response)
-        return TypeAdapter(list[ResourceIdentifierPutPostDelete]).validate_python(
+        return TypeAdapter(list[ResourceIdentifierPut]).validate_python(
             response.json()["data"]
         )[0]
 
-    def _post_resource(
-        self, endpoint: str, resource: T
-    ) -> ResourceIdentifierPutPostDelete:
+    def _post_resource(self, endpoint: str, resource: T) -> ResourceIdentifierPost:
         """Post request of a resource to an endpoint
 
         Args:
@@ -158,11 +157,11 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             json=self._convert_resource_to_dict(resource),
         )
         check_response_for_error(response)
-        return TypeAdapter(list[ResourceIdentifierPutPostDelete]).validate_python(
+        return TypeAdapter(list[ResourceIdentifierPost]).validate_python(
             response.json()["data"]
         )[0]
 
-    def _delete_resource(self, endpoint: str) -> ResourceIdentifierPutPostDelete:
+    def _delete_resource(self, endpoint: str) -> ResourceIdentifierDelete:
         """Delete request of a resource to an endpoint
 
         Args:
@@ -173,7 +172,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         """
         response = self._session.delete(url=endpoint)
         check_response_for_error(response)
-        return TypeAdapter(list[ResourceIdentifierPutPostDelete]).validate_python(
+        return TypeAdapter(list[ResourceIdentifierDelete]).validate_python(
             response.json()["data"]
         )[0]
 
@@ -187,9 +186,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             f"/clip/v2/resource/light/{light_id}", list[LightGet]
         )[0]
 
-    def put_light(
-        self, light_id: str, data: LightPut
-    ) -> ResourceIdentifierPutPostDelete:
+    def put_light(self, light_id: str, data: LightPut) -> ResourceIdentifierPut:
         return self._put_resource(f"/clip/v2/resource/light/{light_id}", data)
 
     # -------------------------------- Scenes --------------------------------
@@ -202,15 +199,13 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             f"/clip/v2/resource/scene/{scene_id}", list[SceneGet]
         )[0]
 
-    def put_scene(
-        self, scene_id: str, data: ScenePut
-    ) -> ResourceIdentifierPutPostDelete:
+    def put_scene(self, scene_id: str, data: ScenePut) -> ResourceIdentifierPut:
         return self._put_resource(f"/clip/v2/resource/scene/{scene_id}", data)
 
-    def post_scene(self, data: ScenePost) -> ResourceIdentifierPutPostDelete:
+    def post_scene(self, data: ScenePost) -> ResourceIdentifierPost:
         return self._post_resource("/clip/v2/resource/scene", data)
 
-    def delete_scene(self, scene_id: str) -> ResourceIdentifierPutPostDelete:
+    def delete_scene(self, scene_id: str) -> ResourceIdentifierDelete:
         return self._delete_resource(f"/clip/v2/resource/scene/{scene_id}")
 
     # -------------------------------- Rooms --------------------------------
@@ -220,8 +215,14 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
     def get_room(self, room_id: str) -> RoomGet:
         return self._get_resource(f"/clip/v2/resource/room/{room_id}", list[RoomGet])[0]
 
-    def put_room(self, room_id: str, data: RoomPut) -> ResourceIdentifierPutPostDelete:
+    def put_room(self, room_id: str, data: RoomPut) -> ResourceIdentifierPut:
         return self._put_resource(f"/clip/v2/resource/room/{room_id}", data)
+
+    def post_room(self, data: RoomPost) -> ResourceIdentifierPost:
+        return self._post_resource("/clip/v2/resource/room", data)
+
+    def delete_room(self, room_id: str) -> ResourceIdentifierDelete:
+        return self._delete_resource(f"/clip/v2/resource/room/{room_id}")
 
     # -------------------------------- GroupedLights --------------------------------
     def get_grouped_lights(self) -> list[GroupedLightGet]:
@@ -236,7 +237,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
 
     def put_grouped_light(
         self, grouped_light_id: str, data: GroupedLightPut
-    ) -> ResourceIdentifierPutPostDelete:
+    ) -> ResourceIdentifierPut:
         return self._put_resource(
             f"/clip/v2/resource/grouped_light/{grouped_light_id}", data
         )
