@@ -91,6 +91,28 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         check_response_for_error(response)
         return TypeAdapter(resource_type).validate_python(response.json()["data"])
 
+    def _convert_resource_to_dict(resource: T) -> dict:
+        """Converts a resource (dataclass) into a dictionary
+
+        All values of None will be ignored
+
+        Args:
+            resource (T): Resource to convert
+
+        Returns:
+            dict: Dictionary of data
+
+        Raises:
+            TypeError: If the resource type is invalid
+        """
+        if is_dataclass(resource):
+            # Convert data
+            return asdict(
+                resource, dict_factory=lambda x: {k: v for (k, v) in x if v is not None}
+            )
+        else:
+            raise TypeError("Invalid resource type, should be a dataclass")
+
     def _put_resource(self, endpoint: str, resource: T):
         """Put request of a resource to an endpoint
 
@@ -100,18 +122,13 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
                           converted - all values of None will be ignored)
 
         Raises:
+            TypeError: If the resource type is invalid
             HTTPError: When there is an error in the response
         """
 
-        if is_dataclass(resource):
-            # Convert data
-            data = asdict(
-                resource, dict_factory=lambda x: {k: v for (k, v) in x if v is not None}
-            )
-        else:
-            raise RuntimeError("Invalid resource type, should be a dataclass")
-
-        response = self._session.put(url=endpoint, json=data)
+        response = self._session.put(
+            url=endpoint, json=self._convert_resource_to_dict(resource)
+        )
         check_response_for_error(response)
 
     # -------------------------------- Lights --------------------------------

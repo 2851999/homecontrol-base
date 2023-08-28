@@ -62,9 +62,20 @@ with bridge.connect_api() as conn:
     # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
     # print(conn.get_grouped_lights())
     # print(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
-    conn.put_grouped_light(
-        "42e245c4-ef2a-447c-9b55-0f657862b0ac", GroupedLightPut(**{"on": {"on": False}})
-    )
+    # conn.put_grouped_light(
+    #     "42e245c4-ef2a-447c-9b55-0f657862b0ac", GroupedLightPut(**{"on": {"on": False}})
+    # )
+
+    # print(
+    #     json.dumps(
+    #         conn._session.get("/clip/v2/resource/behavior_script").json(), indent=4
+    #     )
+    # )
+    # print(
+    #     json.dumps(
+    #         conn._session.get("/clip/v2/resource/behavior_instance").json(), indent=4
+    #     )
+    # )
 
 
 # @dataclass

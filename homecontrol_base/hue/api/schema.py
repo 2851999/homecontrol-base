@@ -158,12 +158,12 @@ class PowerupGet:
 
 @dataclass
 class LightGet:
+    type: Literal["light"]
     id: str
     owner: OwnerGet
     # metadata - deprecated
     on: OnGet
     mode: Literal["normal", "streaming"]
-    type: Optional[str] = None
     id_v1: Optional[str] = None
     dimming: Optional[DimmingGet] = None
     color_temperature: Optional[ColorTemperatureGet] = None
@@ -293,7 +293,7 @@ class PowerupPut:
 
 @dataclass
 class LightPut:
-    type: Optional[str] = None
+    type: Optional[Literal["light"]] = None
     metadata: Optional[MetadataPut] = None
     on: Optional[OnPut] = None
     dimming: Optional[DimmingPut] = None
@@ -392,6 +392,7 @@ class PaletteGet:
 
 @dataclass
 class SceneGet:
+    type: Literal["scene"]
     id: str
     actions: list[ActionGet]
     metadata: MetadataGet
@@ -399,7 +400,6 @@ class SceneGet:
     palette: Optional[PaletteGet]
     speed: float
     auto_dynamic: bool
-    type: Optional[str] = None
     id_v1: Optional[str] = None
 
 
@@ -468,7 +468,7 @@ class PalettePut:
 
 @dataclass
 class ScenePut:
-    type: Optional[str] = None
+    type: Optional[Literal["scene"]] = None
     action: Optional[list[ActionPut]] = None
     recall: Optional[Recall] = None
     metadata: Optional[MetadataPutName] = None
@@ -492,11 +492,11 @@ class RoomMetadataGet:
 
 @dataclass
 class RoomGet:
+    type: Literal["room"]
     id: str
     children: list[ResourceIdentifierGet]
     services: list[ResourceIdentifierGet]
     metadata: RoomMetadataGet
-    type: Optional[str] = None
     id_v1: Optional[str] = None
 
 
@@ -515,7 +515,7 @@ class RoomMetadataPut:
 
 @dataclass
 class RoomPut:
-    type: Optional[str] = None
+    type: Optional[Literal["room"]] = None
     children: Optional[list[ResourceIdentifierPut]] = None
     metadata: Optional[RoomMetadataPut] = None
 
@@ -525,9 +525,9 @@ class RoomPut:
 
 @dataclass
 class GroupedLightGet:
+    type: Literal["grouped_light"]
     id: str
     owner: OwnerGet
-    type: Optional[str] = None
     id_v1: Optional[str] = None
     on: Optional[OnGet] = None
     dimming: Optional[DimmingGetBrightness] = None
@@ -539,7 +539,7 @@ class GroupedLightGet:
 
 @dataclass
 class GroupedLightPut:
-    type: Optional[str] = None
+    type: Optional[Literal["grouped_light"]] = None
     on: Optional[OnPut] = None
     dimming: Optional[DimmingPut] = None
     dimming_delta: Optional[DimmingDeltaPut] = None
