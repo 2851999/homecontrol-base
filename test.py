@@ -1,7 +1,15 @@
+from dataclasses import asdict
+import json
+from typing import Optional
+from pydantic import TypeAdapter, parse_obj_as
+from pydantic.dataclasses import dataclass
+from pydantic.json import pydantic_encoder
+
 from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
+from homecontrol_base.hue.api.schema import LightGet
 from homecontrol_base.hue.manager import HueManager
 
 # homecontrol_db.create_tables()
@@ -27,4 +35,34 @@ hue_manager = HueManager()
 bridge = hue_manager.get_bridge_by_name("Bridge0")
 
 with bridge.connect_api() as conn:
-    print(conn._session.get("/clip/v2/resource/light").json())
+    data = conn._session.get("/clip/v2/resource/light").json()
+    print(TypeAdapter(list[LightGet]).validate_python(data["data"]))
+
+
+# @dataclass
+# class Test:
+#     test: str
+
+
+# data = {"test": "hello", "another": "test"}
+# print(Test(**data))
+
+
+# @dataclass
+# class Test2:
+#     on: Optional[bool] = None
+
+
+# @dataclass
+# class Test3:
+#     test1: Optional[str] = None
+#     on: Optional[Test2] = None
+
+
+# data = Test3()
+# # data = Test3(**{"on": {"on": True}})
+# data.test1 = "str"
+
+
+# print(asdict(data, dict_factory=lambda x: {k: v for (k, v) in x if v is not None}))
+# print(json.dumps(data, default=pydantic_encoder))
