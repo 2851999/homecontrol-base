@@ -30,7 +30,7 @@ class HueManager:
 
     def _load_all(self):
         with homecontrol_db.connect() as conn:
-            bridges = conn.get_hue_bridges()
+            bridges = conn.hue_bridges.get_all()
             for bridge_info in bridges:
                 self._load_bridge(bridge_info)
 
@@ -50,7 +50,7 @@ class HueManager:
         if not bridge:
             # Attempt to load it
             with homecontrol_db.connect() as conn:
-                bridge = self._load_bridge(conn.get_hue_bridge(bridge_id))
+                bridge = self._load_bridge(conn.hue_bridges.get(bridge_id))
         return bridge
 
     def get_bridge_by_name(self, bridge_name: str) -> HueBridge:
@@ -66,7 +66,7 @@ class HueManager:
         """
         # Look up the bridge in the database (so can get id)
         with homecontrol_db.connect() as conn:
-            bridge_info = conn.get_hue_bridge_by_name(bridge_name)
+            bridge_info = conn.hue_bridges.get_by_name(bridge_name)
         bridge = self._bridges.get(bridge_info.id)
         if not bridge:
             bridge = self._load_bridge(bridge_info)
@@ -89,7 +89,7 @@ class HueManager:
             ca_cert=self._hue_config.ca_cert,
         )
         with homecontrol_db.connect() as conn:
-            bridge_info = conn.create_hue_bridge(bridge_info)
+            bridge_info = conn.hue_bridges.create(bridge_info)
         return self._load_bridge(bridge_info)
 
     def discover(self) -> list[HueBridgeDiscoverInfo]:

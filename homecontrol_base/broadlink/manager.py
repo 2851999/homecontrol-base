@@ -1,9 +1,8 @@
 from homecontrol_base.broadlink.device import BroadlinkDevice
-from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
+from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
-from homecontrol_base.database.homecontrol_base import models
 
 
 class BroadlinkManager:
@@ -24,7 +23,7 @@ class BroadlinkManager:
 
     def _load_all(self):
         with homecontrol_db.connect() as conn:
-            devices = conn.get_broadlink_devices()
+            devices = conn.broadlink_devices.get_all()
             for device_info in devices:
                 self._load_device(device_info)
 
@@ -44,7 +43,7 @@ class BroadlinkManager:
         if not device:
             # Attempt to load it
             with homecontrol_db.connect() as conn:
-                device = self._load_device(conn.get_broadlink_device(device_id))
+                device = self._load_device(conn.broadlink_devices.get(device_id))
         return device
 
     def get_device_by_name(self, device_name: str) -> BroadlinkDevice:
@@ -60,7 +59,7 @@ class BroadlinkManager:
         """
         # Look up the device in the database (so can get id)
         with homecontrol_db.connect() as conn:
-            device_info = conn.get_broadlink_device_by_name(device_name)
+            device_info = conn.broadlink_devices.get_by_name(device_name)
         device = self._devices.get(device_info.id)
         if not device:
             device = self._load_device(device_info)
@@ -81,7 +80,7 @@ class BroadlinkManager:
             name=name, ip_address=discover_info.ip_address
         )
         with homecontrol_db.connect() as conn:
-            device_info = conn.create_broadlink_device(device_info)
+            device_info = conn.broadlink_devices.create(device_info)
         return self._load_device(device_info)
 
     def record_action(self, device_id: str, name: str) -> models.BroadlinkAction:
@@ -103,7 +102,7 @@ class BroadlinkManager:
         # Save to database
         action = models.BroadlinkAction(name=name, packet=packet)
         with homecontrol_db.connect() as conn:
-            action = conn.create_broadlink_action(action)
+            action = conn.broadlink_actions.create(action)
         return action
 
     def play_action(self, device_id: str, action_id: str):
@@ -120,6 +119,6 @@ class BroadlinkManager:
         """
         # Obtain the action
         with homecontrol_db.connect() as conn:
-            action = conn.get_broadlink_action(action_id)
+            action = conn.broadlink_actions.get(action_id)
         # Playback
         self.get_device(device_id).send_ir_packet(action.packet)

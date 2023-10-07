@@ -40,7 +40,7 @@ class ACManager:
     def _load_all(self):
         """Loads all devices from the database"""
         with homecontrol_db.connect() as conn:
-            devices = conn.get_ac_devices()
+            devices = conn.ac_devices.get_all()
             for device_info in devices:
                 self._load_device(device_info)
 
@@ -59,7 +59,7 @@ class ACManager:
         if not device:
             # Attempt to load it
             with homecontrol_db.connect() as conn:
-                device = self._load_device(conn.get_ac_device(device_id))
+                device = self._load_device(conn.ac_devices.get(device_id))
         return device
 
     def get_device_by_name(self, device_name: str) -> ACDevice:
@@ -75,7 +75,7 @@ class ACManager:
         """
         # Look up the device in the database (so can get id)
         with homecontrol_db.connect() as conn:
-            device_info = conn.get_ac_device_by_name(device_name)
+            device_info = conn.ac_devices.get_by_name(device_name)
         device = self._devices.get(device_info.id)
         if not device:
             device = self._load_device(device_info)
@@ -100,5 +100,5 @@ class ACManager:
             name=name, ip_address=ip_address, account=self._midea_config.account
         )
         with homecontrol_db.connect() as conn:
-            device_info = conn.create_ac_device(device_info)
+            device_info = conn.ac_devices.create(device_info)
         return self._load_device(device_info)
