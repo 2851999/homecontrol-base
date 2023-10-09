@@ -6,7 +6,7 @@ from sqlalchemy.orm import declarative_base
 Base = declarative_base()
 
 
-class ACDeviceInfo(Base):
+class ACDeviceInfoInDB(Base):
     __tablename__ = "ac_devices"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -17,7 +17,7 @@ class ACDeviceInfo(Base):
     token = Column(String)
 
 
-class HueBridgeInfo(Base):
+class HueBridgeInDB(Base):
     __tablename__ = "hue_bridges"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -29,7 +29,7 @@ class HueBridgeInfo(Base):
     client_key = Column(String)
 
 
-class BroadlinkDeviceInfo(Base):
+class BroadlinkDeviceInDB(Base):
     __tablename__ = "broadlink_devices"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -37,7 +37,7 @@ class BroadlinkDeviceInfo(Base):
     ip_address = Column(String, unique=True)
 
 
-class BroadlinkAction(Base):
+class BroadlinkActionInDB(Base):
     __tablename__ = "broadlink_actions"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)

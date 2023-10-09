@@ -3,7 +3,7 @@ from homecontrol_base.config.midea import MideaConfig
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
-from homecontrol_base.database.homecontrol_base.models import ACDeviceInfo
+from homecontrol_base.database.homecontrol_base.models import ACDeviceInfoInDB
 from homecontrol_base.exceptions import DeviceNotFoundError
 
 
@@ -31,7 +31,7 @@ class ACManager:
         if not lazy_load:
             self._load_all()
 
-    def _load_device(self, device_info: ACDeviceInfo) -> ACDevice:
+    def _load_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
         """Adds a device into _devices"""
         device = ACDevice(device_info)
         self._devices[device_info.id] = device

@@ -22,7 +22,7 @@ class HueManager:
 
         self._load_all()
 
-    def _load_bridge(self, bridge_info: models.HueBridgeInfo) -> HueBridge:
+    def _load_bridge(self, bridge_info: models.HueBridgeInDB) -> HueBridge:
         """Adds a bridge into _bridges"""
         bridge = HueBridge(bridge_info, self._hue_config)
         self._bridges[bridge_info.id] = bridge

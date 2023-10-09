@@ -1,10 +1,10 @@
 import time
-from typing import Optional
+
+import broadlink
+
 from homecontrol_base.broadlink.exceptions import IncompatibleDeviceError, RecordTimeout
 from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
 from homecontrol_base.database.homecontrol_base import models
-import broadlink
-
 from homecontrol_base.exceptions import DeviceNotFoundError
 
 
@@ -17,14 +17,14 @@ class BroadlinkDevice:
     # Minimum time between querying if anything has been learnt yet (seconds)
     LEARNING_SLEEP_TIME = 1
 
-    _device_info: models.BroadlinkDeviceInfo
+    _device_info: models.BroadlinkDeviceInDB
     _device: broadlink.Device
 
-    def __init__(self, device_info: models.BroadlinkDeviceInfo):
+    def __init__(self, device_info: models.BroadlinkDeviceInDB):
         """Initialises and authenticates the device
 
         Args:
-            device_info (models.BroadlinkDeviceInfo): Device info
+            device_info (models.BroadlinkDeviceInDB): Device info
         """
 
         self._device_info = device_info

@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import TypeAdapter, parse_obj_as
 from pydantic.dataclasses import dataclass
 from pydantic.json import pydantic_encoder
+from homecontrol_base.aircon.device import ACDevice
 
 from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.broadlink.manager import BroadlinkManager
@@ -130,3 +131,10 @@ broadlink_manager = BroadlinkManager()
 #     "d8d759d1-0e53-4aee-b9d1-9d172cf3c08e", "aa6aa93cfe0e450080b676a727f96f8e"
 # )
 # device = broadlink_manager.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e")
+
+# ac_manager = ACManager()
+# device = ac_manager.get_device_by_name("Games Room")
+# state = device.get_state()
+# print(state)
+# state.power = True
+# device.set_state(state)

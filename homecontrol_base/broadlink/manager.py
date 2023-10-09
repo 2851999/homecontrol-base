@@ -15,7 +15,7 @@ class BroadlinkManager:
 
         self._load_all()
 
-    def _load_device(self, device_info: models.BroadlinkDeviceInfo) -> BroadlinkDevice:
+    def _load_device(self, device_info: models.BroadlinkDeviceInDB) -> BroadlinkDevice:
         """Adds a device into _devices"""
         device = BroadlinkDevice(device_info)
         self._devices[device_info.id] = device
@@ -76,14 +76,14 @@ class BroadlinkManager:
             DeviceNotFoundError: If unable to find the device
         """
         discover_info = BroadlinkDevice.discover(ip_address=ip_address)
-        device_info = models.BroadlinkDeviceInfo(
+        device_info = models.BroadlinkDeviceInDB(
             name=name, ip_address=discover_info.ip_address
         )
         with homecontrol_db.connect() as conn:
             device_info = conn.broadlink_devices.create(device_info)
         return self._load_device(device_info)
 
-    def record_action(self, device_id: str, name: str) -> models.BroadlinkAction:
+    def record_action(self, device_id: str, name: str) -> models.BroadlinkActionInDB:
         """Records an action from a Broadlink device and saves it to the
         database
 
@@ -100,7 +100,7 @@ class BroadlinkManager:
         packet = self.get_device(device_id).record_ir_packet()
 
         # Save to database
-        action = models.BroadlinkAction(name=name, packet=packet)
+        action = models.BroadlinkActionInDB(name=name, packet=packet)
         with homecontrol_db.connect() as conn:
             action = conn.broadlink_actions.create(action)
         return action

@@ -13,16 +13,16 @@ from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 class HueBridge:
     """Handles a Phillips Hue bridge"""
 
-    _bridge_info: models.HueBridgeInfo
+    _bridge_info: models.HueBridgeInDB
     _hue_config: HueConfig
 
     def __init__(
-        self, bridge_info: models.HueBridgeInfo, hue_config: HueConfig
+        self, bridge_info: models.HueBridgeInDB, hue_config: HueConfig
     ) -> None:
         """Constructor
 
         Args:
-            bridge_info (models.HueBridgeInfo): Hue bridge connection info
+            bridge_info (models.HueBridgeInDB): Hue bridge connection info
             hue_config (HueConfig): Hue config
         """
         self._bridge_info = bridge_info
@@ -38,7 +38,7 @@ class HueBridge:
     @staticmethod
     def authenticate(
         name: str, discover_info: HueBridgeDiscoverInfo, ca_cert: Path
-    ) -> models.HueBridgeInfo:
+    ) -> models.HueBridgeInDB:
         """Requests a new application key from a bridge
 
         When first run, will produce an error requesting the user to press
@@ -52,7 +52,7 @@ class HueBridge:
                             HTTPS connection
 
         Returns:
-            models.HueBridgeInfo: Information required to connect to a bride
+            models.HueBridgeInDB: Information required to connect to a bride
 
         Raises:
             HueBridgeButtonNotPressedError: When the button on the Hue bridge

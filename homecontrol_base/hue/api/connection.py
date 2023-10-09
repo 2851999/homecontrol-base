@@ -1,4 +1,3 @@
-import json
 from dataclasses import asdict, is_dataclass
 from typing import Type, TypeVar
 
@@ -32,7 +31,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
     def __init__(self, session: HueBridgeSession) -> None:
         super().__init__(session)
 
-    def authenticate(self, name: str) -> models.HueBridgeInfo:
+    def authenticate(self, name: str) -> models.HueBridgeInDB:
         """Requests a new application key from a bridge
 
         When first run, will produce an error requesting the user to press
@@ -44,7 +43,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             discover_info (str): Information from discovery
 
         Returns:
-            models.HueBridgeInfo: Information required to connect to a bride
+            models.HueBridgeInDB: Information required to connect to a bride
 
         Raises:
             HueBridgeButtonNotPressedError: When the button on the Hue bridge
@@ -68,7 +67,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             )
         elif "success" in response_json:
             # Now have a username and key
-            return models.HueBridgeInfo(
+            return models.HueBridgeInDB(
                 name=name,
                 ip_address=discover_info.internalipaddress,
                 port=discover_info.port,

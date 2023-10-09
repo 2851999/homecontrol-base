@@ -1,10 +1,11 @@
 import asyncio
 
-from msmart.device import air_conditioning
-from msmart.scanner import MideaDiscovery
+from msmart.device.AC.device import AirConditioner
+from msmart.discover import Discover
 
 from homecontrol_base.aircon.exceptions import ACInvalidStateError
 from homecontrol_base.aircon.state import ACDeviceState
+from homecontrol_base.aircon.utils import run_until_complete
 from homecontrol_base.config.midea import MideaAccount
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.exceptions import DeviceConnectionError, DeviceNotFoundError
@@ -13,23 +14,25 @@ from homecontrol_base.exceptions import DeviceConnectionError, DeviceNotFoundErr
 class ACDevice:
     """Class for handling an air conditioning device"""
 
-    _device_info: models.ACDeviceInfo
-    _device: air_conditioning
+    _device_info: models.ACDeviceInfoInDB
+    _device: AirConditioner
 
-    def __init__(self, device_info: models.ACDeviceInfo):
+    def __init__(self, device_info: models.ACDeviceInfoInDB):
         """Initialises and authenticates the device
 
         Args:
-            device_info (models.ACDeviceInfo): Device authentication info
+            device_info (models.ACDeviceInfoInDB): Device authentication info
         """
 
         # Connect to the device
         self._device_info = device_info
-        self._device = air_conditioning(
+        self._device = AirConditioner(
             device_info.ip_address, device_info.identifier, 6444
         )
-        self._device.authenticate(device_info.key, device_info.token)
-        self._device.get_capabilities()
+        run_until_complete(
+            self._device.authenticate, token=device_info.token, key=device_info.key
+        )
+        run_until_complete(self._device.get_capabilities)
 
     def _get_current_state(self) -> ACDeviceState:
         """Returns the current state of the device"""
@@ -45,12 +48,12 @@ class ACDevice:
             indoor_temperature=self._device.indoor_temperature,
             outdoor_temperature=self._device.outdoor_temperature,
             display_on=self._device.display_on,
-            prompt_tone=self._device.prompt_tone,
+            prompt_tone=self._device.beep,
         )
 
     def _assign_state(self, state: ACDeviceState):
         """Assigns a given state to the device"""
-        self._device.power = state.power
+        self._device.power_state = state.power
         self._device.target_temperature = state.target_temperature
         self._device.operational_mode = state.operational_mode
         self._device.fan_speed = state.fan_speed
@@ -58,7 +61,7 @@ class ACDevice:
         self._device.eco_mode = state.eco_mode
         self._device.turbo_mode = state.turbo_mode
         self._device.fahrenheit = state.fahrenheit
-        self._device.prompt_tone = state.prompt_tone
+        self._device.beep = state.prompt_tone
 
     def _validate_state(self, state: ACDeviceState):
         """Checks that the given state is valid (for use before it is sent to the device)
@@ -83,12 +86,12 @@ class ACDevice:
         """
         # Units sometimes return 0 when this is not actually accurate,
         # refresh twice in such cases
-        self._device.refresh()
+        run_until_complete(self._device.refresh)
         if (
             self._device.indoor_temperature == 0
             and self._device.outdoor_temperature == 0
         ):
-            self._device.refresh()
+            run_until_complete(self._device.refresh)
 
         return self._get_current_state()
 
@@ -101,7 +104,7 @@ class ACDevice:
             DeviceConnectionError: If the connection repeatedly fails
         """
         try:
-            self._device.apply()
+            run_until_complete(self._device.apply)
         except UnboundLocalError as err:
             if current_retry < 3:
                 self._apply_state(current_retry=current_retry + 1)
@@ -122,14 +125,14 @@ class ACDevice:
         # Attempt to apply the state
         self._apply_state()
 
-    def get_info(self) -> models.ACDeviceInfo:
+    def get_info(self) -> models.ACDeviceInfoInDB:
         """Returns information about the device"""
         return self._device_info
 
     @staticmethod
     def discover(
         name: str, ip_address: str, account: MideaAccount
-    ) -> models.ACDeviceInfo:
+    ) -> models.ACDeviceInfoInDB:
         """Attempts to make a connection with an air conditioning unit given
         it's ip address and returns the relevant details to make a connection
 
@@ -139,7 +142,7 @@ class ACDevice:
             account (MideaAccount): Account to use for the discovery
 
         Returns:
-            models.ACDeviceInfo: Information for connecting to the device
+            models.ACDeviceInfoInDB: Information for connecting to the device
 
         Raises:
             DeviceConnectionError: When an error occurs while attempting to
@@ -149,14 +152,17 @@ class ACDevice:
 
         found_devices = None
         try:
-            discovery = MideaDiscovery(
-                account=account.username, password=account.password, amount=1
-            )
             # Try a max of 3 times
             attempts = 0
             while not found_devices and attempts < 3:
                 loop = asyncio.new_event_loop()
-                found_devices = loop.run_until_complete(discovery.get(ip_address))
+                found_devices = loop.run_until_complete(
+                    Discover.discover(
+                        target=ip_address,
+                        account=account.username,
+                        password=account.password,
+                    )
+                )
                 loop.close()
                 attempts += 1
         except Exception as err:
@@ -177,7 +183,7 @@ class ACDevice:
                 )
 
             # Return the required info
-            return models.ACDeviceInfo(
+            return models.ACDeviceInfoInDB(
                 name=name,
                 ip_address=ip_address,
                 identifier=found_device.id,

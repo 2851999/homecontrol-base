@@ -26,17 +26,17 @@ class HostNameIgnoringAdapter(HTTPAdapter):
 class HueBridgeSession(SessionWithBaseURL):
     """Handles a connection to a Phillips Hue bridge session"""
 
-    _connection_info: Union[HueBridgeDiscoverInfo, models.HueBridgeInfo]
+    _connection_info: Union[HueBridgeDiscoverInfo, models.HueBridgeInDB]
 
     def __init__(
         self,
-        connection_info: Union[HueBridgeDiscoverInfo, models.HueBridgeInfo],
+        connection_info: Union[HueBridgeDiscoverInfo, models.HueBridgeInDB],
         ca_cert: Path,
     ) -> None:
         """Constructor
 
         Args:
-            connection_info (Union[HueBridgeDiscoverInfo, models.HueBridgeInfo]):
+            connection_info (Union[HueBridgeDiscoverInfo, models.HueBridgeInDB]):
                             Info for connecting to the bridge
             ca_cert (Path): Path to the Hue bridge certificate required for a
                             HTTPS connection
