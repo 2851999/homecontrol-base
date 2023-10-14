@@ -112,7 +112,7 @@ homecontrol_db.create_tables()
 #     #                 },
 #     #             },
 #     #         ],
-#     #         "metadata": {"name": "Homecontrol"},
+#     #         "metadata": {"name": "HomeControl"},
 #     #         "group": {"rid": "e7e6883f-85ae-4d28-8dab-7b783445acad", "rtype": "room"},
 #     #     }
 #     # )
