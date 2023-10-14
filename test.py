@@ -22,6 +22,7 @@ from homecontrol_base.hue.api.schema import (
     ScenePut,
 )
 from homecontrol_base.hue.manager import HueManager
+from homecontrol_base.service.homecontrol_base import create_homecontrol_base_service
 
 homecontrol_db.create_tables()
 
@@ -125,16 +126,28 @@ homecontrol_db.create_tables()
 #     # print(conn.post_room(data))
 #     # print(conn.delete_room("5c61e8e8-bf18-471a-b393-b6f51fb2cbf3"))
 
-broadlink_manager = BroadlinkManager()
+# broadlink_manager = BroadlinkManager()
 # print(broadlink_manager.record_action("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e", "Test1").id)
 # broadlink_manager.play_action(
 #     "d8d759d1-0e53-4aee-b9d1-9d172cf3c08e", "aa6aa93cfe0e450080b676a727f96f8e"
 # )
 # device = broadlink_manager.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e")
 
-# ac_manager = ACManager()
-# device = ac_manager.get_device_by_name("Games Room")
-# state = device.get_state()
-# print(state)
-# state.power = True
-# device.set_state(state)
+# with create_homecontrol_base_service() as service:
+#     bridge = service.hue.get_bridge_by_name("Bridge0")
+
+#     with bridge.connect_api() as conn:
+#         lights = conn.get_lights()
+#         for light in lights:
+#             if light.on.on:
+#                 print(light.id)
+
+# with create_homecontrol_base_service() as service:
+#     device = service.aircon.get_device_by_name("Games Room")
+#     state = device.get_state()
+#     print(state)
+#     state.power = True
+#     device.set_state(state)
+
+# with create_homecontrol_base_service() as test:
+#     print(test.broadlink.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e"))

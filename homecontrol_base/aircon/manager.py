@@ -1,10 +1,12 @@
 from homecontrol_base.aircon.device import ACDevice
 from homecontrol_base.config.midea import MideaConfig
 from homecontrol_base.database.homecontrol_base.database import (
+    HomeControlBaseDatabaseConnection,
+)
+from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
 from homecontrol_base.database.homecontrol_base.models import ACDeviceInfoInDB
-from homecontrol_base.exceptions import DeviceNotFoundError
 
 
 class ACManager:
@@ -44,12 +46,16 @@ class ACManager:
             for device_info in devices:
                 self._load_device(device_info)
 
-    def get_device(self, device_id: str) -> ACDevice:
+    def get_device(
+        self, db_conn: HomeControlBaseDatabaseConnection, device_id: str
+    ) -> ACDevice:
         """Returns a device given its id
 
         Attempts to load from the database if not already loaded
 
         Args:
+            db_conn (HomeControlBaseDatabaseConnection): Database connection
+                    to use in the event a device needs to be looked up
             device_id (str): ID of the device to get
 
         Raises:
@@ -58,47 +64,21 @@ class ACManager:
         device = self._devices.get(device_id)
         if not device:
             # Attempt to load it
-            with homecontrol_db.connect() as conn:
-                device = self._load_device(conn.ac_devices.get(device_id))
+            device = self._load_device(db_conn.ac_devices.get(device_id))
         return device
 
-    def get_device_by_name(self, device_name: str) -> ACDevice:
-        """Returns a device given its name - slower than get_device
-
-        Attempts to load from the database if not already loaded
-
-        Args:
-            device_name (str): The name of the device to get
-
-        Raises:
-            DeviceNotFoundError: If the device isn't found
-        """
-        # Look up the device in the database (so can get id)
-        with homecontrol_db.connect() as conn:
-            device_info = conn.ac_devices.get_by_name(device_name)
-        device = self._devices.get(device_info.id)
-        if not device:
-            device = self._load_device(device_info)
-        return device
-
-    def add_device(self, name: str, ip_address: str) -> ACDevice:
+    def add_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
         """Adds an air conditioning device
 
         Args:
-            name (str): Name to describe the device
-            ip_address (str): IP address of the device
+            device_info (ACDeviceInfoInDB): Device info
 
         Returns:
-            str: The new device's id
+            ACDevice: The new device
 
         Raises:
             DeviceConnectionError: When an error occurs while attempting to
                                    connect to the device
             DeviceNotFoundError: When the device isn't found
         """
-        device_info = ACDevice.discover(
-            name=name, ip_address=ip_address, account=self._midea_config.account
-        )
-        with homecontrol_db.connect() as conn:
-            device_info = conn.ac_devices.create(device_info)
         return self._load_device(device_info)

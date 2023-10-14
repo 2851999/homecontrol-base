@@ -7,7 +7,7 @@ from homecontrol_base.database.homecontrol_base.models import BroadlinkActionInD
 from homecontrol_base.exceptions import DeviceNotFoundError
 
 
-class BroadlinkActionInDBsDBConnection(DatabaseConnection):
+class BroadlinkActionDBConnection(DatabaseConnection):
     """Handles BroadlinkActionInDB's in the database"""
 
     def __init__(self, session: session):

@@ -1,13 +1,12 @@
-from typing import Callable
-
 from homecontrol_base.config.hue import HueConfig
 from homecontrol_base.database.homecontrol_base import models
+from homecontrol_base.database.homecontrol_base.database import (
+    HomeControlBaseDatabaseConnection,
+)
 from homecontrol_base.database.homecontrol_base.database import (
     database as homecontrol_db,
 )
 from homecontrol_base.hue.bridge import HueBridge
-from homecontrol_base.hue.exceptions import HueBridgeButtonNotPressedError
-from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 
 
 class HueManager:
@@ -34,12 +33,16 @@ class HueManager:
             for bridge_info in bridges:
                 self._load_bridge(bridge_info)
 
-    def get_bridge(self, bridge_id: str) -> HueBridge:
+    def get_bridge(
+        self, db_conn: HomeControlBaseDatabaseConnection, bridge_id: str
+    ) -> HueBridge:
         """Returns a bridge given its id
 
         Attempts to load from the database if not already loaded
 
         Args:
+            db_conn (HomeControlBaseDatabaseConnection): Database connection
+                    to use in the event a device needs to be looked up
             bridge_id (str): ID of the bridge to get
 
         Raises:
@@ -49,84 +52,17 @@ class HueManager:
 
         if not bridge:
             # Attempt to load it
-            with homecontrol_db.connect() as conn:
-                bridge = self._load_bridge(conn.hue_bridges.get(bridge_id))
+            bridge = self._load_bridge(db_conn.hue_bridges.get(bridge_id))
         return bridge
 
-    def get_bridge_by_name(self, bridge_name: str) -> HueBridge:
-        """Returns a bridge given its name - slower than get_bridge
-
-        Attempts to load from the database if not already loaded
-
-        Args:
-            bridge_name (str): The name of the bridge to get
-
-        Raises:
-            DeviceNotFoundError: If the bridge isn't found
-        """
-        # Look up the bridge in the database (so can get id)
-        with homecontrol_db.connect() as conn:
-            bridge_info = conn.hue_bridges.get_by_name(bridge_name)
-        bridge = self._bridges.get(bridge_info.id)
-        if not bridge:
-            bridge = self._load_bridge(bridge_info)
-        return bridge
-
-    def add_bridge(self, name: str, discover_info: HueBridgeDiscoverInfo) -> HueBridge:
+    def add_bridge(self, bridge_info: models.HueBridgeInDB) -> HueBridge:
         """Adds a Hue bridge
 
         Args:
-            name (str): Name to label the bridge
-            discover_info (HueBridgeDiscoverInfo): Bridge info from discovery
+            bridge_info (models.HueBridgeInDB): Bridge info
 
         Raises:
             HueBridgeButtonNotPressedError: When the button on the Hue bridge
                                             needs to be pressed
         """
-        bridge_info = HueBridge.authenticate(
-            name=name,
-            discover_info=discover_info,
-            ca_cert=self._hue_config.ca_cert,
-        )
-        with homecontrol_db.connect() as conn:
-            bridge_info = conn.hue_bridges.create(bridge_info)
         return self._load_bridge(bridge_info)
-
-    def discover(self) -> list[HueBridgeDiscoverInfo]:
-        """Attempts to discover all Hue bridges on the network"""
-        return HueBridge.discover(self._hue_config.mDNS_discovery)
-
-    def discover_and_add_all_bridges(
-        self,
-        name_function: Callable[
-            [int, HueBridgeDiscoverInfo], str
-        ] = lambda i, discover_info: f"Bridge{i}",
-    ):
-        """Discovers and adds all bridges found on the network
-
-        This will pause by requiring input via command line to confirm
-        all buttons on the bridges have been pressed. Should only be
-        called once. (Utility method only)
-
-        Args:
-            name_function (Callable[[int], str]): Function that should
-                          return the name of a bridge given it's index
-                          and HueBridgeDiscoverInfo
-        """
-        # Find all available bridges
-        discovered_bridges = self.discover()
-        done = [False] * len(discovered_bridges)
-        while not all(done):
-            for index, discovered_bridge in enumerate(discovered_bridges):
-                if not done[index]:
-                    try:
-                        self.add_bridge(
-                            name_function(index, discovered_bridge), discovered_bridge
-                        )
-                        done[index] = True
-                    except HueBridgeButtonNotPressedError:
-                        pass
-            if not all(done):
-                input(
-                    "Please press the button on top of all your Hue bridge's and then press enter"
-                )
