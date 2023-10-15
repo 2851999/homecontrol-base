@@ -4,7 +4,7 @@ from homecontrol_base.database.homecontrol_base.database import (
     HomeControlBaseDatabaseConnection,
 )
 from homecontrol_base.database.homecontrol_base.database import (
-    database as homecontrol_db,
+    database as homecontrol_base_db,
 )
 from homecontrol_base.hue.bridge import HueBridge
 
@@ -28,7 +28,7 @@ class HueManager:
         return bridge
 
     def _load_all(self):
-        with homecontrol_db.connect() as conn:
+        with homecontrol_base_db.connect() as conn:
             bridges = conn.hue_bridges.get_all()
             for bridge_info in bridges:
                 self._load_bridge(bridge_info)

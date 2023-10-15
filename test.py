@@ -11,7 +11,7 @@ from homecontrol_base.aircon.manager import ACManager
 from homecontrol_base.broadlink.manager import BroadlinkManager
 from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
 from homecontrol_base.database.homecontrol_base.database import (
-    database as homecontrol_db,
+    database as homecontrol_base_db,
 )
 from homecontrol_base.hue.api.schema import (
     GroupedLightPut,
@@ -24,7 +24,7 @@ from homecontrol_base.hue.api.schema import (
 from homecontrol_base.hue.manager import HueManager
 from homecontrol_base.service.homecontrol_base import create_homecontrol_base_service
 
-homecontrol_db.create_tables()
+homecontrol_base_db.create_tables()
 
 
 # def setup_ac():

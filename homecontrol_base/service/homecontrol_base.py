@@ -9,7 +9,7 @@ from homecontrol_base.database.homecontrol_base.database import (
     HomeControlBaseDatabaseConnection,
 )
 from homecontrol_base.database.homecontrol_base.database import (
-    database as homecontrol_db,
+    database as homecontrol_base_db,
 )
 from homecontrol_base.hue.manager import HueManager
 from homecontrol_base.hue.service import HueService
@@ -28,12 +28,12 @@ class HomeControlBaseService(BaseService[HomeControlBaseDatabaseConnection]):
 
     def __init__(
         self,
-        database_connection: HomeControlBaseDatabaseConnection,
+        db_conn: HomeControlBaseDatabaseConnection,
         ac_manager: Optional[ACManager] = None,
         hue_manager: Optional[HueManager] = None,
         broadlink_manager: Optional[BroadlinkManager] = None,
     ):
-        super().__init__(database_connection)
+        super().__init__(db_conn)
 
         self._ac_manager = ac_manager
         self._hue_manager = hue_manager
@@ -74,7 +74,8 @@ def create_homecontrol_base_service(
     hue_manager: Optional[HueManager] = None,
     broadlink_manager: Optional[BroadlinkManager] = None,
 ):
-    with homecontrol_db.connect() as conn:
+    """Creates an instance of HomeControlBaseService using the given managers"""
+    with homecontrol_base_db.connect() as conn:
         yield HomeControlBaseService(
             conn,
             ac_manager=ac_manager,

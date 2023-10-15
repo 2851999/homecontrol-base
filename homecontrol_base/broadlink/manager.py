@@ -4,7 +4,7 @@ from homecontrol_base.database.homecontrol_base.database import (
     HomeControlBaseDatabaseConnection,
 )
 from homecontrol_base.database.homecontrol_base.database import (
-    database as homecontrol_db,
+    database as homecontrol_base_db,
 )
 
 
@@ -25,7 +25,7 @@ class BroadlinkManager:
         return device
 
     def _load_all(self):
-        with homecontrol_db.connect() as conn:
+        with homecontrol_base_db.connect() as conn:
             devices = conn.broadlink_devices.get_all()
             for device_info in devices:
                 self._load_device(device_info)

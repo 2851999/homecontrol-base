@@ -9,5 +9,5 @@ class BaseService(Generic[TDatabaseConnection]):
 
     _db_conn: TDatabaseConnection
 
-    def __init__(self, database_connection: TDatabaseConnection) -> None:
-        self._db_conn = database_connection
+    def __init__(self, db_conn: TDatabaseConnection) -> None:
+        self._db_conn = db_conn

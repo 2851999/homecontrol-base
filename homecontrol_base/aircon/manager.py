@@ -4,7 +4,7 @@ from homecontrol_base.database.homecontrol_base.database import (
     HomeControlBaseDatabaseConnection,
 )
 from homecontrol_base.database.homecontrol_base.database import (
-    database as homecontrol_db,
+    database as homecontrol_base_db,
 )
 from homecontrol_base.database.homecontrol_base.models import ACDeviceInfoInDB
 
@@ -41,7 +41,7 @@ class ACManager:
 
     def _load_all(self):
         """Loads all devices from the database"""
-        with homecontrol_db.connect() as conn:
+        with homecontrol_base_db.connect() as conn:
             devices = conn.ac_devices.get_all()
             for device_info in devices:
                 self._load_device(device_info)
