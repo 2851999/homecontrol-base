@@ -29,25 +29,25 @@ class HomeControlBaseDatabaseConnection(DatabaseConnection):
         super().__init__(session)
 
     @property
-    def ac_devices(self):
+    def ac_devices(self) -> ACDevicesDBConnection:
         if not self._ac_devices:
             self._ac_devices = ACDevicesDBConnection(self._session)
         return self._ac_devices
 
     @property
-    def hue_bridges(self):
+    def hue_bridges(self) -> HueBridgesDBConnection:
         if not self._hue_bridges:
             self._hue_bridges = HueBridgesDBConnection(self._session)
         return self._hue_bridges
 
     @property
-    def broadlink_devices(self):
+    def broadlink_devices(self) -> BroadlinkDevicesDBConnection:
         if not self._broadlink_devices:
             self._broadlink_devices = BroadlinkDevicesDBConnection(self._session)
         return self._broadlink_devices
 
     @property
-    def broadlink_actions(self):
+    def broadlink_actions(self) -> BroadlinkActionsDBConnection:
         if not self._broadlink_actions:
             self._broadlink_actions = BroadlinkActionsDBConnection(self._session)
         return self._broadlink_actions
