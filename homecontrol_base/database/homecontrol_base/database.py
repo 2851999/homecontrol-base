@@ -6,7 +6,7 @@ from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.database.core import Database, DatabaseConnection
 from homecontrol_base.database.homecontrol_base.ac_device import ACDevicesDBConnection
 from homecontrol_base.database.homecontrol_base.broadlink_actions import (
-    BroadlinkActionDBConnection,
+    BroadlinkActionsDBConnection,
 )
 from homecontrol_base.database.homecontrol_base.broadlink_devices import (
     BroadlinkDevicesDBConnection,
@@ -23,7 +23,7 @@ class HomeControlBaseDatabaseConnection(DatabaseConnection):
     _ac_devices: Optional[ACDevicesDBConnection] = None
     _hue_bridges: Optional[HueBridgesDBConnection] = None
     _broadlink_devices: Optional[BroadlinkDevicesDBConnection] = None
-    _broadlink_actions: Optional[BroadlinkActionDBConnection] = None
+    _broadlink_actions: Optional[BroadlinkActionsDBConnection] = None
 
     def __init__(self, session: Session):
         super().__init__(session)
@@ -49,7 +49,7 @@ class HomeControlBaseDatabaseConnection(DatabaseConnection):
     @property
     def broadlink_actions(self):
         if not self._broadlink_actions:
-            self._broadlink_actions = BroadlinkActionDBConnection(self._session)
+            self._broadlink_actions = BroadlinkActionsDBConnection(self._session)
         return self._broadlink_actions
 
 

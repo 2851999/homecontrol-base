@@ -4,3 +4,9 @@ class DeviceConnectionError(Exception):
 
 class DeviceNotFoundError(Exception):
     """Error to be raised when a given device isn't found"""
+
+
+class DatabaseEntryNotFoundError(Exception):
+    """Error to be raised when an entry in the database isn't found (DeviceNotFoundError
+    often used for devices instead - this is just more generic for non-device entries)
+    """
