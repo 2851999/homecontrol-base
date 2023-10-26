@@ -7,6 +7,12 @@ class DeviceNotFoundError(Exception):
 
 
 class DatabaseEntryNotFoundError(Exception):
-    """Error to be raised when an entry in the database isn't found (DeviceNotFoundError
-    often used for devices instead - this is just more generic for non-device entries)
+    """Error to be raised when an entry in the database isn't found
+    (DeviceNotFoundError often used for devices instead - this is just more
+    generic for non-device entries)
     """
+
+
+class DatabaseDuplicateEntry(Exception):
+    """Error to be raised when a duplicate entry is inserted into a database
+    violating a UNIQUE requirement"""
