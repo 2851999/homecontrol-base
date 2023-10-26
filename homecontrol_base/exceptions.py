@@ -13,6 +13,6 @@ class DatabaseEntryNotFoundError(Exception):
     """
 
 
-class DatabaseDuplicateEntry(Exception):
-    """Error to be raised when a duplicate entry is inserted into a database
-    violating a UNIQUE requirement"""
+class DatabaseDuplicateEntryFoundError(Exception):
+    """Error to be raised when a duplicate entry is attempted to be inserted
+    into a database but violates a UNIQUE requirement"""
