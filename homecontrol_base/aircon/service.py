@@ -20,7 +20,7 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
 
         self._ac_manager = ac_manager
 
-    def get_device(self, device_id: str) -> ACDevice:
+    async def get_device(self, device_id: str) -> ACDevice:
         """Returns a device given its id
 
         Attempts to load from the database if not already loaded
@@ -31,9 +31,11 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
         Raises:
             DeviceNotFoundError: If the device isn't found
         """
-        return self._ac_manager.get_device(db_conn=self._db_conn, device_id=device_id)
+        return await self._ac_manager.get_device(
+            db_conn=self._db_conn, device_id=device_id
+        )
 
-    def get_device_by_name(self, device_name: str) -> ACDevice:
+    async def get_device_by_name(self, device_name: str) -> ACDevice:
         """Returns a device given its name - slower than get_device
 
         Attempts to load from the database if not already loaded
@@ -46,11 +48,11 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
         """
         # Look up the device in the database (so can get id)
         device_info = self._db_conn.ac_devices.get_by_name(device_name)
-        return self._ac_manager.get_device(
+        return await self._ac_manager.get_device(
             db_conn=self._db_conn, device_id=str(device_info.id)
         )
 
-    def add_device(self, name: str, ip_address: str) -> ACDevice:
+    async def add_device(self, name: str, ip_address: str) -> ACDevice:
         """Adds an air conditioning device
 
         Args:
@@ -65,10 +67,10 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
                                    connect to the device
             DeviceNotFoundError: When the device isn't found
         """
-        device_info = ACDevice.discover(
+        device_info = await ACDevice.discover(
             name=name,
             ip_address=ip_address,
             account=self._ac_manager._midea_config.account,
         )
         device_info = self._db_conn.ac_devices.create(device_info)
-        return self._ac_manager.add_device(device_info=device_info)
+        return await self._ac_manager.add_device(device_info=device_info)

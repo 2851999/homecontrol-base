@@ -5,7 +5,6 @@ from msmart.discover import Discover
 
 from homecontrol_base.aircon.exceptions import ACInvalidStateError
 from homecontrol_base.aircon.state import ACDeviceState
-from homecontrol_base.aircon.utils import run_until_complete
 from homecontrol_base.config.midea import MideaAccount
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.exceptions import DeviceConnectionError, DeviceNotFoundError
@@ -29,10 +28,17 @@ class ACDevice:
         self._device = AirConditioner(
             device_info.ip_address, device_info.identifier, 6444
         )
-        run_until_complete(
-            self._device.authenticate, token=device_info.token, key=device_info.key
+
+    async def initialise(self):
+        """Initialises and authenticates the device
+
+        Should be called immediately after __init__
+        """
+
+        await self._device.authenticate(
+            token=self._device_info.token, key=self._device_info.key
         )
-        run_until_complete(self._device.get_capabilities)
+        await self._device.get_capabilities()
 
     def _get_current_state(self) -> ACDeviceState:
         """Returns the current state of the device"""
@@ -78,7 +84,7 @@ class ACDevice:
                 f"'target_temperature' of {state.target_temperature} must be between 16 and 30"
             )
 
-    def get_state(self) -> ACDeviceState:
+    async def get_state(self) -> ACDeviceState:
         """Refreshes the device and returns it's current state
 
         Returns:
@@ -86,16 +92,16 @@ class ACDevice:
         """
         # Units sometimes return 0 when this is not actually accurate,
         # refresh twice in such cases
-        run_until_complete(self._device.refresh)
+        await self._device.refresh()
         if (
             self._device.indoor_temperature == 0
             and self._device.outdoor_temperature == 0
         ):
-            run_until_complete(self._device.refresh)
+            await self._device.refresh()
 
         return self._get_current_state()
 
-    def _apply_state(self, current_retry: int = 0):
+    async def _apply_state(self, current_retry: int = 0):
         """Attempts to apply the currently assigned device state
 
         Retries 3 times in the event of an error
@@ -104,7 +110,7 @@ class ACDevice:
             DeviceConnectionError: If the connection repeatedly fails
         """
         try:
-            run_until_complete(self._device.apply)
+            await self._device.apply()
         except UnboundLocalError as err:
             if current_retry < 3:
                 self._apply_state(current_retry=current_retry + 1)
@@ -113,7 +119,7 @@ class ACDevice:
                     f"An error occurred while attempting to apply a state to the AC unit {self._device_info.identifier}"
                 )
 
-    def set_state(self, state: ACDeviceState):
+    async def set_state(self, state: ACDeviceState):
         """Attempts to assign the device state
 
         Raises:
@@ -123,14 +129,14 @@ class ACDevice:
         self._assign_state(state)
 
         # Attempt to apply the state
-        self._apply_state()
+        await self._apply_state()
 
     def get_info(self) -> models.ACDeviceInfoInDB:
         """Returns information about the device"""
         return self._device_info
 
     @staticmethod
-    def discover(
+    async def discover(
         name: str, ip_address: str, account: MideaAccount
     ) -> models.ACDeviceInfoInDB:
         """Attempts to make a connection with an air conditioning unit given
@@ -155,21 +161,17 @@ class ACDevice:
             # Try a max of 3 times
             attempts = 0
             while not found_devices and attempts < 3:
-                loop = asyncio.new_event_loop()
-                found_devices = loop.run_until_complete(
-                    Discover.discover(
-                        target=ip_address,
-                        account=account.username,
-                        password=account.password,
-                    )
+                found_devices = await Discover.discover(
+                    target=ip_address,
+                    account=account.username,
+                    password=account.password,
                 )
-                loop.close()
                 attempts += 1
         except Exception as err:
             raise DeviceConnectionError(
                 "An error occurred while attempting to discover an air "
                 f"conditioning unit at {ip_address}"
-            )
+            ) from err
 
         if found_devices:
             # Only looked for one anyway

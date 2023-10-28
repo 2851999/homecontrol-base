@@ -8,6 +8,7 @@ from pydantic.json import pydantic_encoder
 from homecontrol_base.aircon.device import ACDevice
 
 from homecontrol_base.aircon.manager import ACManager
+from homecontrol_base.utils import run_until_complete
 from homecontrol_base.broadlink.manager import BroadlinkManager
 from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
 from homecontrol_base.database.homecontrol_base.database import (
@@ -152,8 +153,25 @@ homecontrol_base_db.create_tables()
 # with create_homecontrol_base_service() as test:
 #     print(test.broadlink.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e"))
 
-# with create_homecontrol_base_service() as service:
-#     service.aircon.add_device("Joel's Room", "192.168.1.77")
-#     service.aircon.add_device("Games Room", "192.168.1.85")
-#     service.aircon.add_device("Spare Room", "192.168.1.198")
-#     service.aircon.add_device("Mum's Room", "192.168.1.237")
+
+# async def setup_ac():
+#     with create_homecontrol_base_service() as service:
+#         await service.aircon.add_device("Joel's Room", "192.168.1.77")
+#         await service.aircon.add_device("Games Room", "192.168.1.85")
+#         await service.aircon.add_device("Spare Room", "192.168.1.198")
+#         await service.aircon.add_device("Mum's Room", "192.168.1.237")
+
+
+# run_until_complete(setup_ac)
+
+
+# async def test_set_ac_state():
+#     with create_homecontrol_base_service() as service:
+#         device = await service.aircon.get_device_by_name("Games Room")
+#         state = await device.get_state()
+#         print(state)
+#         state.power = False
+#         await device.set_state(state)
+
+
+# run_until_complete(test_set_ac_state)

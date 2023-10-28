@@ -12,41 +12,43 @@ from homecontrol_base.database.homecontrol_base.models import ACDeviceInfoInDB
 class ACManager:
     """Manages a set of ACDevice instances"""
 
-    _lazy_load: bool
-
     _midea_config: MideaConfig
     _devices: dict[str, ACDevice]
 
     def __init__(self, lazy_load: bool = True):
-        """Constructor
-
-        Args:
-            lazy_load (bool): Whether to load devices only when they are
-                              needed. When True will only load all available
-                              devices immediately
-        """
+        """Constructor"""
         self._lazy_load = lazy_load
         self._midea_config = MideaConfig()
         self._devices = {}
 
-        # Load all devices if requested
-        if not lazy_load:
-            self._load_all()
+    async def initialise_all_devices(self):
+        """Initialises and authenticates all devices
 
-    def _load_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
+        Should only be called if don't want to lazy_load the devices
+        and instead want fast access to all of the devices at the cost
+        of waiting for this function to finish.
+
+        Should be called immediately after __init__
+        """
+
+        # Load all devices
+        await self._load_all()
+
+    async def _load_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
         """Adds a device into _devices"""
         device = ACDevice(device_info)
+        await device.initialise()
         self._devices[device_info.id] = device
         return device
 
-    def _load_all(self):
+    async def _load_all(self):
         """Loads all devices from the database"""
         with homecontrol_base_db.connect() as conn:
             devices = conn.ac_devices.get_all()
             for device_info in devices:
-                self._load_device(device_info)
+                await self._load_device(device_info)
 
-    def get_device(
+    async def get_device(
         self, db_conn: HomeControlBaseDatabaseConnection, device_id: str
     ) -> ACDevice:
         """Returns a device given its id
@@ -64,10 +66,10 @@ class ACManager:
         device = self._devices.get(device_id)
         if not device:
             # Attempt to load it
-            device = self._load_device(db_conn.ac_devices.get(device_id))
+            device = await self._load_device(db_conn.ac_devices.get(device_id))
         return device
 
-    def add_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
+    async def add_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
         """Adds an air conditioning device
 
         Args:
@@ -81,4 +83,4 @@ class ACManager:
                                    connect to the device
             DeviceNotFoundError: When the device isn't found
         """
-        return self._load_device(device_info)
+        return await self._load_device(device_info)
