@@ -66,7 +66,9 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
             DeviceNotFoundError: When the device isn't found
         """
         device_info = ACDevice.discover(
-            name=name, ip_address=ip_address, account=self._midea_config.account
+            name=name,
+            ip_address=ip_address,
+            account=self._ac_manager._midea_config.account,
         )
         device_info = self._db_conn.ac_devices.create(device_info)
         return self._ac_manager.add_device(device_info=device_info)
