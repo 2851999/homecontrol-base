@@ -17,7 +17,13 @@ def run_until_complete(
     but ensures it remains functional without async methods
     """
 
-    loop = asyncio.get_event_loop()
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        # Temp fix for running under FastAPI
+        # TODO: really should just let midea be async, then use this if want
+        # separate script
+        loop = asyncio.new_event_loop()
 
     async def async_func():
         return await function(**params)

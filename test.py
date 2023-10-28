@@ -151,3 +151,9 @@ homecontrol_base_db.create_tables()
 
 # with create_homecontrol_base_service() as test:
 #     print(test.broadlink.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e"))
+
+# with create_homecontrol_base_service() as service:
+#     service.aircon.add_device("Joel's Room", "192.168.1.77")
+#     service.aircon.add_device("Games Room", "192.168.1.85")
+#     service.aircon.add_device("Spare Room", "192.168.1.198")
+#     service.aircon.add_device("Mum's Room", "192.168.1.237")
