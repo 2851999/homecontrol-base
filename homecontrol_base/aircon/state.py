@@ -18,7 +18,7 @@ class ACDeviceFanSpeed(IntEnum):
     """Wrapper for air conditioning fan speeds"""
 
     AUTO = AirConditioner.FanSpeed.AUTO  # 102
-    FULL = AirConditioner.FanSpeed.FULL  # 100
+    HIGH = AirConditioner.FanSpeed.HIGH  # 100
     MEDIUM = AirConditioner.FanSpeed.MEDIUM  # 80
     LOW = AirConditioner.FanSpeed.LOW  # 40
     SILENT = AirConditioner.FanSpeed.SILENT  # 20
