@@ -24,6 +24,7 @@ def run_until_complete(
         # TODO: really should just let midea be async, then use this if want
         # separate script
         loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
     async def async_func():
         return await function(**params)
