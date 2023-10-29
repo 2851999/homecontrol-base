@@ -35,6 +35,11 @@ class HueBridge:
         ) as session:
             yield HueBridgeAPIConnection(session)
 
+    @property
+    def info(self) -> models.HueBridgeInDB:
+        """Returns information about the device"""
+        return self._bridge_info
+
     @staticmethod
     def authenticate(
         name: str, discover_info: HueBridgeDiscoverInfo, ca_cert: Path

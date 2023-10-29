@@ -88,7 +88,7 @@ class BroadlinkDevice:
         self._device.send_data(packet)
 
     @property
-    def info(self) -> models.ACDeviceInfoInDB:
+    def info(self) -> models.BroadlinkDeviceDiscoverInfo:
         """Returns information about the device"""
         return self._device_info
 
