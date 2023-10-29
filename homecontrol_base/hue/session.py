@@ -47,7 +47,7 @@ class HueBridgeSession(SessionWithBaseURL):
         if isinstance(connection_info, HueBridgeDiscoverInfo):
             # No auth
             base_url = (
-                f"https://{connection_info.internal_ip_address}:{connection_info.port}"
+                f"https://{connection_info.internalipaddress}:{connection_info.port}"
             )
             auth = False
         else:

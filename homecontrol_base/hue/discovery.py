@@ -29,7 +29,7 @@ class HueDiscoveryListener(ServiceListener):
         self._found_devices.append(
             HueBridgeDiscoverInfo(
                 id=info.properties[b"bridgeid"],
-                internal_ip_address=info.parsed_addresses()[0],
+                internalipaddress=info.parsed_addresses()[0],
                 port=info.port,
             )
         )
