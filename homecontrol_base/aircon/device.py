@@ -131,7 +131,8 @@ class ACDevice:
         # Attempt to apply the state
         await self._apply_state()
 
-    def get_info(self) -> models.ACDeviceInfoInDB:
+    @property
+    def info(self) -> models.ACDeviceInfoInDB:
         """Returns information about the device"""
         return self._device_info
 

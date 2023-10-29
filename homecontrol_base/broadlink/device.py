@@ -87,6 +87,11 @@ class BroadlinkDevice:
 
         self._device.send_data(packet)
 
+    @property
+    def info(self) -> models.ACDeviceInfoInDB:
+        """Returns information about the device"""
+        return self._device_info
+
     @staticmethod
     def _get_discover_info(device: broadlink.Device) -> BroadlinkDeviceDiscoverInfo:
         return BroadlinkDeviceDiscoverInfo(ip_address=device.host[0])
