@@ -68,14 +68,14 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
         bridge_info = HueBridge.authenticate(
             name=name,
             discover_info=discover_info,
-            ca_cert=self._hue_config.ca_cert,
+            ca_cert=self._hue_manager._hue_config.ca_cert,
         )
         bridge_info = self._db_conn.hue_bridges.create(bridge_info)
         return self._hue_manager.add_bridge(bridge_info=bridge_info)
 
     def discover(self) -> list[HueBridgeDiscoverInfo]:
         """Attempts to discover all Hue bridges on the network"""
-        return HueBridge.discover(self._hue_config.mDNS_discovery)
+        return HueBridge.discover(self._hue_manager._hue_config.mDNS_discovery)
 
     def discover_and_add_all_bridges(
         self,
