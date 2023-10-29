@@ -63,13 +63,13 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
             # Need to press button
             raise HueBridgeButtonNotPressedError(
                 "Please press the button on the Hue bridge with ip address "
-                f"'{discover_info.internalipaddress}'"
+                f"'{discover_info.internal_ip_address}'"
             )
         elif "success" in response_json:
             # Now have a username and key
             return models.HueBridgeInDB(
                 name=name,
-                ip_address=discover_info.internalipaddress,
+                ip_address=discover_info.internal_ip_address,
                 port=discover_info.port,
                 identifier=discover_info.id,
                 username=response_json["success"]["username"],
@@ -78,7 +78,7 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
 
         raise RuntimeError(
             "Failed to authenticate Hue bridge with ip "
-            f"'{discover_info.internalipaddress}', Response: {response_json}"
+            f"'{discover_info.internal_ip_address}', Response: {response_json}"
         )
 
     def _get_resource(self, endpoint: str, resource_type: Type[T]) -> T:

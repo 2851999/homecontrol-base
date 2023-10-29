@@ -6,5 +6,5 @@ class HueBridgeDiscoverInfo:
     """Stores info from the discovery of a Hue bridge"""
 
     id: str
-    internalipaddress: str
+    internal_ip_address: str
     port: int
