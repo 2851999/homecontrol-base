@@ -86,10 +86,10 @@ class ACManager:
         return await self._load_device(device_info)
 
     def remove_device(self, device_id: str) -> None:
-        """Removes the device with the given ID
+        """Removes the device with the given ID (including from the database)
 
         Args:
-            device_id (str): ID of the device to delete
+            device_id (str): ID of the device to remove
 
         Raises:
             DeviceNotFoundError: When the device isn't found

@@ -68,10 +68,10 @@ class HueManager:
         return self._load_bridge(bridge_info)
 
     def remove_bridge(self, bridge_id: str) -> None:
-        """Removes the bridge with the given ID
+        """Removes the bridge with the given ID (including from the database)
 
         Args:
-            bridge_id (str): ID of the bridge to delete
+            bridge_id (str): ID of the bridge to remove
 
         Raises:
             DeviceNotFoundError: When the device isn't found

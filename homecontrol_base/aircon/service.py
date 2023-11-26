@@ -74,3 +74,14 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
         )
         device_info = self._db_conn.ac_devices.create(device_info)
         return await self._ac_manager.add_device(device_info=device_info)
+
+    def remove_device(self, device_id: str) -> None:
+        """Removes an air conditioning device
+
+        Args:
+            device_id (str): ID of the device to remove
+
+        Raises:
+            DeviceNotFoundError: When the device isn't found
+        """
+        self._ac_manager.remove_device(device_id)

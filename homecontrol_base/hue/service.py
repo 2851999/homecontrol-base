@@ -111,3 +111,14 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
                 input(
                     "Please press the button on top of all your Hue bridge's and then press enter"
                 )
+
+    def remove_bridge(self, bridge_id: str) -> None:
+        """Removes a Hue bridge
+
+        Args:
+            bridge_id (str): ID of the bridge to remove
+
+        Raises:
+            DeviceNotFoundError: When the bridge isn't found
+        """
+        self._hue_manager.remove_bridge(bridge_id)

@@ -70,6 +70,17 @@ class BroadlinkService(BaseService[HomeControlBaseDatabaseConnection]):
         device_info = self._db_conn.broadlink_devices.create(device_info)
         return self._broadlink_manager.add_device(device_info=device_info)
 
+    def remove_device(self, device_id: str) -> None:
+        """Removes a Broadlink device
+
+        Args:
+            device_id (str): ID of the device to remove
+
+        Raises:
+            DeviceNotFoundError: When the device isn't found
+        """
+        self._broadlink_manager.remove_device(device_id)
+
     def record_action(self, device_id: str, name: str) -> models.BroadlinkActionInDB:
         """Records an action from a Broadlink device and saves it to the
         database
