@@ -84,3 +84,19 @@ class ACManager:
             DeviceNotFoundError: When the device isn't found
         """
         return await self._load_device(device_info)
+
+    def remove_device(self, device_id: str) -> None:
+        """Removes the device with the given ID
+
+        Args:
+            device_id (str): ID of the device to delete
+
+        Raises:
+            DeviceNotFoundError: When the device isn't found
+        """
+        # Delete from the database
+        with homecontrol_base_db.connect() as conn:
+            conn.ac_devices.delete(device_id)
+        # Remove from manager if already loaded
+        if device_id in self._devices:
+            del self._devices[device_id]

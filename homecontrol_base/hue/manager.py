@@ -66,3 +66,19 @@ class HueManager:
                                             needs to be pressed
         """
         return self._load_bridge(bridge_info)
+
+    def remove_bridge(self, bridge_id: str) -> None:
+        """Removes the bridge with the given ID
+
+        Args:
+            bridge_id (str): ID of the bridge to delete
+
+        Raises:
+            DeviceNotFoundError: When the device isn't found
+        """
+        # Delete from the database
+        with homecontrol_base_db.connect() as conn:
+            conn.hue_bridges.delete(bridge_id)
+        # Remove from manager if already loaded
+        if bridge_id in self._bridges:
+            del self._bridges[bridge_id]
