@@ -3,6 +3,7 @@ import time
 import requests
 from pydantic import TypeAdapter
 from zeroconf import ServiceBrowser, ServiceListener, Zeroconf
+from homecontrol_base.hue.exceptions import HueBridgesDiscoveryError
 
 from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 
@@ -44,6 +45,9 @@ def discover_hue_bridges(mDNS_discovery: bool) -> list[HueBridgeDiscoverInfo]:
 
     Args:
         mDNS_discovery (bool): Whether to use mDNS for discovery
+
+    Raises:
+        HueBridgesDiscoveryError: When not using mDNS but getting rate limited
     """
     if mDNS_discovery:
         zeroconf = Zeroconf()
@@ -55,6 +59,8 @@ def discover_hue_bridges(mDNS_discovery: bool) -> list[HueBridgeDiscoverInfo]:
         return listener.get_found_devices()
     else:
         response = requests.get(DISCOVER_URL)
+        if response.status_code == 429:
+            raise HueBridgesDiscoveryError(response.reason)
         response.raise_for_status()
         bridges = TypeAdapter(list[HueBridgeDiscoverInfo]).validate_python(
             response.json()

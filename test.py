@@ -8,6 +8,7 @@ from pydantic.json import pydantic_encoder
 from homecontrol_base.aircon.device import ACDevice
 
 from homecontrol_base.aircon.manager import ACManager
+from homecontrol_base.hue.discovery import discover_hue_bridges
 from homecontrol_base.utils import run_until_complete
 from homecontrol_base.broadlink.manager import BroadlinkManager
 from homecontrol_base.broadlink.structs import BroadlinkDeviceDiscoverInfo
@@ -175,3 +176,5 @@ homecontrol_base_db.create_tables()
 
 
 # run_until_complete(test_set_ac_state)
+
+# print(discover_hue_bridges(True))
