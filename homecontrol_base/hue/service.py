@@ -74,7 +74,11 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
         return self._hue_manager.add_bridge(bridge_info=bridge_info)
 
     def discover(self) -> list[HueBridgeDiscoverInfo]:
-        """Attempts to discover all Hue bridges on the network"""
+        """Attempts to discover all Hue bridges on the network
+
+        Raises:
+            HueBridgesDiscoveryError: When not using mDNS but getting rate limited
+        """
         return HueBridge.discover(self._hue_manager._hue_config.mDNS_discovery)
 
     def discover_and_add_all_bridges(
@@ -93,6 +97,9 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
             name_function (Callable[[int], str]): Function that should
                           return the name of a bridge given it's index
                           and HueBridgeDiscoverInfo
+
+        Raises:
+            HueBridgesDiscoveryError: When not using mDNS but getting rate limited
         """
         # Find all available bridges
         discovered_bridges = self.discover()
