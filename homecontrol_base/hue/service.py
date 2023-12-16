@@ -24,7 +24,7 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
 
         self._hue_manager = hue_manager
 
-    def get_bridge(self, device_id: str) -> HueBridge:
+    def get_bridge(self, bridge_id: str) -> HueBridge:
         """Returns a bridge given its id
 
         Attempts to load from the database if not already loaded
@@ -35,7 +35,7 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
         Raises:
             DeviceNotFoundError: If the bridge isn't found
         """
-        return self._hue_manager.get_device(db_conn=self._db_conn, device_id=device_id)
+        return self._hue_manager.get_bridge(db_conn=self._db_conn, bridge_id=bridge_id)
 
     def get_bridge_by_name(self, bridge_name: str) -> HueBridge:
         """Returns a bridge given its name - slower than get_bridge
