@@ -5,6 +5,7 @@ from typing import Generator
 from homecontrol_base.config.hue import HueConfig
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.connection import HueBridgeAPIConnection
+from homecontrol_base.hue.connection import HueBridgeConnection
 from homecontrol_base.hue.discovery import discover_hue_bridges
 from homecontrol_base.hue.session import HueBridgeSession
 from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
@@ -34,6 +35,11 @@ class HueBridge:
             connection_info=self._bridge_info, ca_cert=self._hue_config.ca_cert
         ) as session:
             yield HueBridgeAPIConnection(session)
+
+    @contextmanager
+    def connect(self) -> Generator[HueBridgeConnection, None, None]:
+        with self.connect_api() as api_connection:
+            yield HueBridgeConnection(api_connection)
 
     @property
     def info(self) -> models.HueBridgeInDB:
