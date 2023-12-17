@@ -366,7 +366,7 @@ class MetadataImageGet:
 
 
 @dataclass
-class MetadataGet:
+class SceneMetadataGet:
     name: str
     image: Optional[MetadataImageGet] = None
 
@@ -401,7 +401,7 @@ class SceneGet:
     type: Literal["scene"]
     id: str
     actions: list[ActionGet]
-    metadata: MetadataGet
+    metadata: SceneMetadataGet
     group: GroupGet
     palette: Optional[PaletteGet]
     speed: float
@@ -701,3 +701,40 @@ class GroupedLightPut:
     color: Optional[ColorPut] = None
     alert: Optional[AlertPut] = None
     dynamics: Optional[DynamicsPutDuration] = None
+
+
+# -------------------------------- DeviceGet --------------------------------
+
+
+@dataclass
+class ProductData:
+    model_id: str
+    manufacturer_name: str
+    product_name: str
+    product_archetype: str
+    certified: bool
+    software_version: str
+    hardware_platform_type: Optional[str] = None
+
+
+@dataclass
+class DeviceMetadataGet:
+    name: str
+    archetype: str
+
+
+@dataclass
+class UserTest:
+    status: Literal["set", "changing"]
+    usertest: bool
+
+
+@dataclass
+class DeviceGet:
+    type: Literal["device"]
+    id: str
+    product_data: ProductData
+    metadata: DeviceMetadataGet
+    services: list[ResourceIdentifierGet]
+    id_v1: Optional[str] = None
+    usertest: Optional[UserTest] = None

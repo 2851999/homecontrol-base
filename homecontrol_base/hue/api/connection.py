@@ -7,6 +7,7 @@ from homecontrol_base.connection import BaseConnection
 from homecontrol_base.database.homecontrol_base import models
 from homecontrol_base.hue.api.exceptions import check_response_for_error
 from homecontrol_base.hue.api.schema import (
+    DeviceGet,
     GroupedLightGet,
     GroupedLightPut,
     LightGet,
@@ -240,3 +241,12 @@ class HueBridgeAPIConnection(BaseConnection[HueBridgeSession]):
         return self._put_resource(
             f"/clip/v2/resource/grouped_light/{grouped_light_id}", data
         )
+
+    # -------------------------------- Devices --------------------------------
+    def get_devices(self) -> list[DeviceGet]:
+        return self._get_resource("/clip/v2/resource/device", list[DeviceGet])
+
+    def get_device(self, device_id: str) -> DeviceGet:
+        return self._get_resource(
+            f"/clip/v2/resource/device/{device_id}", list[DeviceGet]
+        )[0]

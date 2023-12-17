@@ -178,3 +178,29 @@ homecontrol_base_db.create_tables()
 # run_until_complete(test_set_ac_state)
 
 # print(discover_hue_bridges(True))
+
+
+def print_json(dictionary):
+    print(json.dumps(dictionary, indent=2))
+
+
+class HueRoom:
+    name: str
+    grouped_light_id: str
+    lights: str
+
+
+with create_homecontrol_base_service() as service:
+    bridge = service.hue.get_bridge("1e9ffff0-960b-4dd9-8372-a16b6df69d0e")
+    with bridge.connect_api() as conn:
+        for room in conn.get_rooms():
+            print_json(asdict(room))
+
+        print_json(
+            asdict(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
+        )
+
+        # for light in conn.get_lights():
+        #     print_json(asdict(light))
+
+        print_json(asdict(conn.get_device("e48696a0-c193-48c2-84c0-0d63a04a35d2")))
