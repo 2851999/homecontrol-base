@@ -94,7 +94,7 @@ class ACDevice:
         # Check if anything appears wrong
         if self._device.indoor_temperature is None:
             if current_retry < 3:
-                self._refresh_state(current_retry=current_retry + 1)
+                await self._refresh_state(current_retry=current_retry + 1)
             else:
                 raise DeviceConnectionError(
                     f"An error occurred while attempting to refresh the state of an AC unit {self._device_info.identifier}"
