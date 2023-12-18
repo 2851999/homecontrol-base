@@ -84,6 +84,24 @@ class ACDevice:
                 f"'target_temperature' of {state.target_temperature} must be between 16 and 30"
             )
 
+    async def _refresh_state(self, current_retry: int = 0):
+        """Attempts to refresh the current state
+
+        Retries 3 times in the event something appears to go wrong
+        Raises:
+            DeviceConnectionError: If the refresh repeatedly fails
+        """
+        await self._device.refresh()
+
+        # Check if anything appears wrong
+        if self._device.indoor_temperature is None:
+            if current_retry < 3:
+                self._refresh_state(current_retry=current_retry + 1)
+            else:
+                raise DeviceConnectionError(
+                    f"An error occurred while attempting to refresh the state of an AC unit {self._device_info.identifier}"
+                )
+
     async def get_state(self) -> ACDeviceState:
         """Refreshes the device and returns it's current state
 
@@ -92,12 +110,12 @@ class ACDevice:
         """
         # Units sometimes return 0 when this is not actually accurate,
         # refresh twice in such cases
-        await self._device.refresh()
+        await self._refresh_state()
         if (
             self._device.indoor_temperature == 0
             and self._device.outdoor_temperature == 0
         ):
-            await self._device.refresh()
+            await self._refresh_state()
 
         return self._get_current_state()
 
@@ -117,7 +135,7 @@ class ACDevice:
             else:
                 raise DeviceConnectionError(
                     f"An error occurred while attempting to apply a state to the AC unit {self._device_info.identifier}"
-                )
+                ) from err
 
     async def set_state(self, state: ACDeviceState):
         """Attempts to assign the device state
