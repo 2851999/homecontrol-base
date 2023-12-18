@@ -1,6 +1,8 @@
 from enum import IntEnum
+from typing import Annotated
 
 from msmart.device.AC.device import AirConditioner
+from pydantic import BeforeValidator
 from pydantic.dataclasses import dataclass
 
 
@@ -33,6 +35,19 @@ class ACDeviceSwingMode(IntEnum):
     BOTH = AirConditioner.SwingMode.BOTH  # 0xF, 14
 
 
+def _fan_speed_validator(value: int) -> ACDeviceFanSpeed:
+    """Validator for fan speed assignment
+
+    For a mode such as Dry - the fan speed can be 101 in my case, old
+    msmart would return default of Auto, but msmart-ng just returns 101
+    so recreate the old behaviour here to avoid validation errors
+    """
+    if value in set(speed.value for speed in ACDeviceFanSpeed):
+        return value
+    else:
+        return ACDeviceFanSpeed.AUTO
+
+
 @dataclass
 class ACDeviceState:
     """For storing the state of an air conditioning device"""
@@ -41,7 +56,7 @@ class ACDeviceState:
     power: bool
     target_temperature: float
     operational_mode: ACDeviceMode
-    fan_speed: ACDeviceFanSpeed
+    fan_speed: Annotated[ACDeviceFanSpeed, BeforeValidator(_fan_speed_validator)]
     swing_mode: ACDeviceSwingMode
     eco_mode: bool
     turbo_mode: bool
