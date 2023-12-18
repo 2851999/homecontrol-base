@@ -1,5 +1,3 @@
-import asyncio
-
 from msmart.device.AC.device import AirConditioner
 from msmart.discover import Discover
 
@@ -39,6 +37,7 @@ class ACDevice:
             token=self._device_info.token, key=self._device_info.key
         )
         await self._device.get_capabilities()
+        print("Device initialised", self._device_info.id)
 
     def _get_current_state(self) -> ACDeviceState:
         """Returns the current state of the device"""
