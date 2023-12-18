@@ -190,19 +190,30 @@ class HueRoom:
     lights: str
 
 
-with create_homecontrol_base_service() as service:
-    bridge = service.hue.get_bridge("1e9ffff0-960b-4dd9-8372-a16b6df69d0e")
-    # with bridge.connect_api() as conn:
-    #     for room in conn.get_rooms():
-    #         print_json(asdict(room))
+# with create_homecontrol_base_service() as service:
+#     bridge = service.hue.get_bridge("1e9ffff0-960b-4dd9-8372-a16b6df69d0e")
+#     # with bridge.connect_api() as conn:
+#     #     for room in conn.get_rooms():
+#     #         print_json(asdict(room))
 
-    #     print_json(
-    #         asdict(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
-    #     )
+#     #     print_json(
+#     #         asdict(conn.get_grouped_light("42e245c4-ef2a-447c-9b55-0f657862b0ac"))
+#     #     )
 
-    #     # for light in conn.get_lights():
-    #     #     print_json(asdict(light))
+#     #     # for light in conn.get_lights():
+#     #     #     print_json(asdict(light))
 
-    #     print_json(asdict(conn.get_device("e48696a0-c193-48c2-84c0-0d63a04a35d2")))
-    with bridge.connect() as conn:
-        print(conn.get_rooms())
+#     #     print_json(asdict(conn.get_device("e48696a0-c193-48c2-84c0-0d63a04a35d2")))
+#     with bridge.connect() as conn:
+#         print(conn.get_rooms())
+
+
+async def test():
+    with create_homecontrol_base_service() as service:
+        await service.aircon.get_device("d257751b-996a-4cc9-8009-a32bd38857dd")
+        await service.aircon.get_device("d257751b-996a-4cc9-8009-a32bd38857dd")
+        await service.aircon.get_device("d257751b-996a-4cc9-8009-a32bd38857dd")
+        print(len(service._ac_manager._devices))
+
+
+run_until_complete(test)

@@ -38,7 +38,8 @@ class ACManager:
         """Adds a device into _devices"""
         device = ACDevice(device_info)
         await device.initialise()
-        self._devices[device_info.id] = device
+        # Must convert to string here as device_info.id is a UUID from the database
+        self._devices[str(device_info.id)] = device
         return device
 
     async def _load_all(self):
