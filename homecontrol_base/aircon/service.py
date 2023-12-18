@@ -32,7 +32,7 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
             DeviceNotFoundError: If the device isn't found
         """
         return await self._ac_manager.get_device(
-            db_conn=self._db_conn, device_id=device_id
+            db_conn=self.db_conn, device_id=device_id
         )
 
     async def get_device_by_name(self, device_name: str) -> ACDevice:
@@ -47,9 +47,9 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
             DeviceNotFoundError: If the device isn't found
         """
         # Look up the device in the database (so can get id)
-        device_info = self._db_conn.ac_devices.get_by_name(device_name)
+        device_info = self.db_conn.ac_devices.get_by_name(device_name)
         return await self._ac_manager.get_device(
-            db_conn=self._db_conn, device_id=str(device_info.id)
+            db_conn=self.db_conn, device_id=str(device_info.id)
         )
 
     async def add_device(self, name: str, ip_address: str) -> ACDevice:
@@ -72,7 +72,7 @@ class ACService(BaseService[HomeControlBaseDatabaseConnection]):
             ip_address=ip_address,
             account=self._ac_manager._midea_config.account,
         )
-        device_info = self._db_conn.ac_devices.create(device_info)
+        device_info = self.db_conn.ac_devices.create(device_info)
         return await self._ac_manager.add_device(device_info=device_info)
 
     def remove_device(self, device_id: str) -> None:

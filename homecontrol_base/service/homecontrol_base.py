@@ -46,7 +46,7 @@ class HomeControlBaseService(BaseService[HomeControlBaseDatabaseConnection]):
         if not self._aircon:
             if not self._ac_manager:
                 self._ac_manager = ACManager()
-            self._aircon = ACService(db_conn=self._db_conn, ac_manager=self._ac_manager)
+            self._aircon = ACService(db_conn=self.db_conn, ac_manager=self._ac_manager)
         return self._aircon
 
     @property
@@ -54,7 +54,7 @@ class HomeControlBaseService(BaseService[HomeControlBaseDatabaseConnection]):
         if not self._hue:
             if not self._hue_manager:
                 self._hue_manager = HueManager()
-            self._hue = HueService(db_conn=self._db_conn, hue_manager=self._hue_manager)
+            self._hue = HueService(db_conn=self.db_conn, hue_manager=self._hue_manager)
         return self._hue
 
     @property
@@ -63,7 +63,7 @@ class HomeControlBaseService(BaseService[HomeControlBaseDatabaseConnection]):
             if not self._broadlink_manager:
                 self._broadlink_manager = BroadlinkManager()
             self._broadlink = BroadlinkService(
-                db_conn=self._db_conn, broadlink_manager=self._broadlink_manager
+                db_conn=self.db_conn, broadlink_manager=self._broadlink_manager
             )
         return self._broadlink
 

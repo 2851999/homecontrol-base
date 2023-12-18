@@ -35,7 +35,7 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
         Raises:
             DeviceNotFoundError: If the bridge isn't found
         """
-        return self._hue_manager.get_bridge(db_conn=self._db_conn, bridge_id=bridge_id)
+        return self._hue_manager.get_bridge(db_conn=self.db_conn, bridge_id=bridge_id)
 
     def get_bridge_by_name(self, bridge_name: str) -> HueBridge:
         """Returns a bridge given its name - slower than get_bridge
@@ -49,9 +49,9 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
             DeviceNotFoundError: If the bridge isn't found
         """
         # Look up the device in the database (so can get id)
-        bridge_info = self._db_conn.hue_bridges.get_by_name(bridge_name)
+        bridge_info = self.db_conn.hue_bridges.get_by_name(bridge_name)
         return self._hue_manager.get_bridge(
-            db_conn=self._db_conn, bridge_id=str(bridge_info.id)
+            db_conn=self.db_conn, bridge_id=str(bridge_info.id)
         )
 
     def add_bridge(self, name: str, discover_info: HueBridgeDiscoverInfo) -> HueBridge:
@@ -70,7 +70,7 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
             discover_info=discover_info,
             ca_cert=self._hue_manager._hue_config.ca_cert,
         )
-        bridge_info = self._db_conn.hue_bridges.create(bridge_info)
+        bridge_info = self.db_conn.hue_bridges.create(bridge_info)
         return self._hue_manager.add_bridge(bridge_info=bridge_info)
 
     def discover(self) -> list[HueBridgeDiscoverInfo]:
