@@ -3,7 +3,15 @@ from typing import Optional
 from homecontrol_base.connection import BaseConnection
 from homecontrol_base.hue.api.colour import HueColour
 from homecontrol_base.hue.api.connection import HueBridgeAPIConnection
-from homecontrol_base.hue.api.schema import RoomGet
+from homecontrol_base.hue.api.schema import (
+    ColorPut,
+    ColorTemperaturePut,
+    DimmingPut,
+    GroupedLightPut,
+    LightPut,
+    OnPut,
+    RoomGet,
+)
 from homecontrol_base.hue.session import HueBridgeSession
 from homecontrol_base.hue.structs import (
     HueRoom,
@@ -11,6 +19,7 @@ from homecontrol_base.hue.structs import (
     HueRoomLight,
     HueRoomLightState,
     HueRoomState,
+    HueRoomStateUpdate,
 )
 
 
@@ -101,3 +110,51 @@ class HueBridgeConnection(BaseConnection[HueBridgeSession]):
             ),
             lights=light_states,
         )
+
+    def set_room_state(
+        self, room_id: str, update_data: HueRoomStateUpdate
+    ) -> HueRoomState:
+        """Updates the state of a HueRoom
+
+        Args:
+            room_id (str): ID of the HueRoom to update
+            update_data (HueRoomStateUpdate): Update data to assign
+        """
+
+        # Obtain the room itself
+        room = self._get_room(self._api_connection.get_room(room_id))
+
+        # Check what needs updating and update them
+        if update_data.grouped_light is not None:
+            grouped_light_put = GroupedLightPut(
+                on=OnPut(on=update_data.grouped_light.on)
+                if update_data.grouped_light.on is not None
+                else None,
+                dimming=DimmingPut(brightness=update_data.grouped_light.brightness)
+                if update_data.grouped_light.brightness is not None
+                else None,
+            )
+            self._api_connection.put_grouped_light(
+                room.grouped_light_id, grouped_light_put
+            )
+        if update_data.lights is not None:
+            for light_id, light_update_data in update_data.lights.items():
+                light_put = LightPut(
+                    on=OnPut(on=light_update_data.on)
+                    if light_update_data.on is not None
+                    else None,
+                    dimming=DimmingPut(brightness=light_update_data.brightness)
+                    if light_update_data.brightness is not None
+                    else None,
+                    color_temperature=ColorTemperaturePut(
+                        mirek=light_update_data.colour_temperature
+                    )
+                    if light_update_data.colour_temperature is not None
+                    else None,
+                    color=ColorPut(xy=light_update_data.colour.to_xy())
+                    if light_update_data.colour is not None
+                    else None,
+                )
+                self._api_connection.put_light(light_id, light_put)
+
+        return self.get_room_state(room_id)

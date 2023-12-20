@@ -1,5 +1,6 @@
 from typing import Optional
 
+from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
 from homecontrol_base.hue.api.colour import HueColour
@@ -54,3 +55,22 @@ class HueRoomLightState:
 class HueRoomState:
     grouped_light: HueRoomGroupedLightState
     lights: dict[str, HueRoomLightState]
+
+
+class HueRoomGroupedLightStateUpdate(BaseModel):
+    on: Optional[bool] = None
+    brightness: Optional[float] = None
+
+
+class HueRoomLightStateUpdate(BaseModel):
+    on: Optional[bool] = None
+
+    # Will be none for a plug
+    brightness: Optional[float] = None
+    colour_temperature: Optional[int] = None
+    colour: Optional[HueColour] = None
+
+
+class HueRoomStateUpdate(BaseModel):
+    grouped_light: Optional[HueRoomGroupedLightStateUpdate] = None
+    lights: Optional[dict[str, HueRoomLightStateUpdate]] = None
