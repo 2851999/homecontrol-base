@@ -222,21 +222,21 @@ class HueRoom:
 
 # run_until_complete(test)
 
-with create_homecontrol_base_service() as service:
-    bridge = service.hue.get_bridge("1e9ffff0-960b-4dd9-8372-a16b6df69d0e")
-    with bridge.connect() as conn:
-        # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
-        # colour = list(
-        #     conn.get_room_state("e7e6883f-85ae-4d28-8dab-7b783445acad").lights.values()
-        # )[1].colour
-        # print(f"rgb({colour.r * 255}, {colour.g * 255}, {colour.b * 255})")
+# with create_homecontrol_base_service() as service:
+#     bridge = service.hue.get_bridge("1e9ffff0-960b-4dd9-8372-a16b6df69d0e")
+#     with bridge.connect() as conn:
+#         # print(conn.get_room("e7e6883f-85ae-4d28-8dab-7b783445acad"))
+#         # colour = list(
+#         #     conn.get_room_state("e7e6883f-85ae-4d28-8dab-7b783445acad").lights.values()
+#         # )[1].colour
+#         # print(f"rgb({colour.r * 255}, {colour.g * 255}, {colour.b * 255})")
 
-        # print(conn.get_room_state("e7e6883f-85ae-4d28-8dab-7b783445acad"))
-        print(
-            conn.set_room_state(
-                "e7e6883f-85ae-4d28-8dab-7b783445acad",
-                HueRoomStateUpdate(
-                    grouped_light=HueRoomGroupedLightStateUpdate(on=False)
-                ),
-            )
-        )
+#         # print(conn.get_room_state("e7e6883f-85ae-4d28-8dab-7b783445acad"))
+#         print(
+#             conn.set_room_state(
+#                 "e7e6883f-85ae-4d28-8dab-7b783445acad",
+#                 HueRoomStateUpdate(
+#                     grouped_light=HueRoomGroupedLightStateUpdate(on=False)
+#                 ),
+#             )
+#         )
