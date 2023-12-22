@@ -3,6 +3,7 @@ from typing import Any, Generator, Generic, Type, TypeVar
 
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy_utils import create_database, database_exists
 
 from homecontrol_base.config.database import DatabaseConfig
 
@@ -44,7 +45,7 @@ class Database(Generic[TDatabaseConnection]):
         """Construct a database
 
         Args:
-            name (str): Name of the database
+            name (str): Name of the database (Will create if doesn't already exist)
             declarative_base (Any): Declarative base used in all models
                                     of the database
             connection_type (TDatabaseConnection): Type of connection returned
@@ -55,6 +56,12 @@ class Database(Generic[TDatabaseConnection]):
         """
 
         self._name = name
+
+        # Create database if it doesn't exist in case not using sqlite
+        url = config.get_url(self._name)
+        if not database_exists(url):
+            create_database(url)
+
         self._engine = create_engine(config.get_url(self._name))
         self._session_factory = sessionmaker(
             autocommit=False, autoflush=False, bind=self._engine
