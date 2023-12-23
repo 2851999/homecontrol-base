@@ -19,14 +19,14 @@ class HueDiscoveryListener(ServiceListener):
         super().__init__(**args)
         self._found_devices = []
 
-    def update_service(self, zeroconf: Zeroconf, type_: str, name: str) -> None:
+    def update_service(self, zc: Zeroconf, type_: str, name: str) -> None:
         pass
 
-    def remove_service(self, zeroconfc: Zeroconf, type_: str, name: str) -> None:
+    def remove_service(self, zc: Zeroconf, type_: str, name: str) -> None:
         pass
 
-    def add_service(self, zeroconf: Zeroconf, type_: str, name: str) -> None:
-        info = zeroconf.get_service_info(type_, name)
+    def add_service(self, zc: Zeroconf, type_: str, name: str) -> None:
+        info = zc.get_service_info(type_, name)
         self._found_devices.append(
             HueBridgeDiscoverInfo(
                 id=info.properties[b"bridgeid"],
