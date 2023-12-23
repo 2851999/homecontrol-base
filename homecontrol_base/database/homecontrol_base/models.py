@@ -24,7 +24,7 @@ class HueBridgeInDB(Base):
     name = Column(String, unique=True, index=True)
     ip_address = Column(String, unique=True)
     port = Column(Integer)
-    identifier = Column(Integer)
+    identifier = Column(String)
     username = Column(String)
     client_key = Column(String)
 
