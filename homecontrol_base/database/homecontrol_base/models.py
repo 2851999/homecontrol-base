@@ -12,7 +12,7 @@ class ACDeviceInfoInDB(Base):
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, unique=True, index=True)
     ip_address = Column(String, unique=True)
-    identifier = Column(Integer)
+    identifier = Column(String)
     key = Column(String)
     token = Column(String)
 
