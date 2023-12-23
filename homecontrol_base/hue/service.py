@@ -73,15 +73,15 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
         bridge_info = self.db_conn.hue_bridges.create(bridge_info)
         return self._hue_manager.add_bridge(bridge_info=bridge_info)
 
-    def discover(self) -> list[HueBridgeDiscoverInfo]:
+    async def discover(self) -> list[HueBridgeDiscoverInfo]:
         """Attempts to discover all Hue bridges on the network
 
         Raises:
             HueBridgesDiscoveryError: When not using mDNS but getting rate limited
         """
-        return HueBridge.discover(self._hue_manager._hue_config.mDNS_discovery)
+        return await HueBridge.discover(self._hue_manager._hue_config.mDNS_discovery)
 
-    def discover_and_add_all_bridges(
+    async def discover_and_add_all_bridges(
         self,
         name_function: Callable[
             [int, HueBridgeDiscoverInfo], str
@@ -102,7 +102,7 @@ class HueService(BaseService[HomeControlBaseDatabaseConnection]):
             HueBridgesDiscoveryError: When not using mDNS but getting rate limited
         """
         # Find all available bridges
-        discovered_bridges = self.discover()
+        discovered_bridges = await self.discover()
         done = [False] * len(discovered_bridges)
         while not all(done):
             for index, discovered_bridge in enumerate(discovered_bridges):

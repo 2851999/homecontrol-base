@@ -1,16 +1,17 @@
-import time
+import asyncio
 
 import requests
 from pydantic import TypeAdapter
-from zeroconf import ServiceBrowser, ServiceListener, Zeroconf
-from homecontrol_base.hue.exceptions import HueBridgesDiscoveryError
+from zeroconf import ServiceStateChange, Zeroconf
+from zeroconf.asyncio import AsyncServiceBrowser, AsyncServiceInfo, AsyncZeroconf
 
+from homecontrol_base.hue.exceptions import HueBridgesDiscoveryError
 from homecontrol_base.hue.structs import HueBridgeDiscoverInfo
 
 DISCOVER_URL = "https://discovery.meethue.com/"
 
 
-class HueDiscoveryListener(ServiceListener):
+class HueDiscoveryListener:
     """Listener for Hue bridges"""
 
     _found_devices: list[HueBridgeDiscoverInfo]
@@ -19,14 +20,11 @@ class HueDiscoveryListener(ServiceListener):
         super().__init__(**args)
         self._found_devices = []
 
-    def update_service(self, zc: Zeroconf, type_: str, name: str) -> None:
-        pass
+    async def add_service(self, zc: Zeroconf, type_: str, name: str) -> None:
+        """Called when service is first discovered"""
 
-    def remove_service(self, zc: Zeroconf, type_: str, name: str) -> None:
-        pass
-
-    def add_service(self, zc: Zeroconf, type_: str, name: str) -> None:
-        info = zc.get_service_info(type_, name)
+        info = AsyncServiceInfo(type_, name)
+        await info.async_request(zc, 3000)
         self._found_devices.append(
             HueBridgeDiscoverInfo(
                 id=info.properties[b"bridgeid"],
@@ -35,11 +33,32 @@ class HueDiscoveryListener(ServiceListener):
             )
         )
 
+    def get_service_handler(self):
+        """Returns an asynchronous handler to be called when a service state
+        changes (To be passed to AsyncServiceBrowser)
+
+        See https://github.com/python-zeroconf/python-zeroconf/blob/master/examples/async_browser.py
+        """
+
+        def async_on_service_state_change(
+            zeroconf: Zeroconf,
+            service_type: str,
+            name: str,
+            state_change: ServiceStateChange,
+        ) -> None:
+            if state_change is ServiceStateChange.Added:
+                asyncio.ensure_future(self.add_service(zeroconf, service_type, name))
+            else:
+                return
+
+        return async_on_service_state_change
+
     def get_found_devices(self) -> list[HueBridgeDiscoverInfo]:
+        """Returns all the found devices"""
         return self._found_devices
 
 
-def discover_hue_bridges(mDNS_discovery: bool) -> list[HueBridgeDiscoverInfo]:
+async def discover_hue_bridges(mDNS_discovery: bool) -> list[HueBridgeDiscoverInfo]:
     """Discovers all Phillips Hue bridges that are available on the
     current network
 
@@ -50,12 +69,19 @@ def discover_hue_bridges(mDNS_discovery: bool) -> list[HueBridgeDiscoverInfo]:
         HueBridgesDiscoveryError: When not using mDNS but getting rate limited
     """
     if mDNS_discovery:
-        zeroconf = Zeroconf()
+        zeroconf = AsyncZeroconf()
         listener = HueDiscoveryListener()
-        browser = ServiceBrowser(zeroconf, "_hue._tcp.local.", listener)
+        browser = AsyncServiceBrowser(
+            zeroconf.zeroconf,
+            "_hue._tcp.local.",
+            handlers=[listener.get_service_handler()],
+        )
         # Wait 5 seconds to collect as many as possible
-        time.sleep(5)
-        zeroconf.close()
+        await asyncio.sleep(5)
+
+        await browser.async_cancel()
+        await zeroconf.async_close()
+
         return listener.get_found_devices()
     else:
         response = requests.get(DISCOVER_URL)

@@ -29,6 +29,7 @@ from homecontrol_base.hue.api.schema import (
 )
 from homecontrol_base.hue.manager import HueManager
 from homecontrol_base.service.homecontrol_base import create_homecontrol_base_service
+from homecontrol_base.hue.bridge import HueBridge
 
 homecontrol_base_db.create_tables()
 
@@ -184,14 +185,14 @@ homecontrol_base_db.create_tables()
 # print(discover_hue_bridges(True))
 
 
-def print_json(dictionary):
-    print(json.dumps(dictionary, indent=2))
+# def print_json(dictionary):
+#     print(json.dumps(dictionary, indent=2))
 
 
-class HueRoom:
-    name: str
-    grouped_light_id: str
-    lights: str
+# class HueRoom:
+#     name: str
+#     grouped_light_id: str
+#     lights: str
 
 
 # with create_homecontrol_base_service() as service:
@@ -240,3 +241,13 @@ class HueRoom:
 #                 ),
 #             )
 #         )
+
+
+async def setup_ac():
+    # print(await HueBridge.discover(True))
+
+    with create_homecontrol_base_service() as service:
+        print(await service.hue.discover())
+
+
+run_until_complete(setup_ac)
