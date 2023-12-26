@@ -4,7 +4,6 @@ from homecontrol_base import session
 from homecontrol_base.broadlink.exceptions import ActionNotFoundError
 from homecontrol_base.database.core import DatabaseConnection
 from homecontrol_base.database.homecontrol_base.models import BroadlinkActionInDB
-from homecontrol_base.exceptions import DeviceNotFoundError
 
 
 class BroadlinkActionsDBConnection(DatabaseConnection):
@@ -88,7 +87,7 @@ class BroadlinkActionsDBConnection(DatabaseConnection):
         )
 
         if rows_deleted == 0:
-            raise DeviceNotFoundError(
+            raise ActionNotFoundError(
                 f"Broadlink action with id '{action_id}' was not found"
             )
 

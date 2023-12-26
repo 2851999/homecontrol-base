@@ -44,7 +44,7 @@ class BroadlinkDevice:
             IncompatibleDeviceError: If the device is incompatible
             RecordTimeout: If the record times out
         """
-        if not isinstance(self._device, broadlink.device.rmmini):
+        if not isinstance(self._device, broadlink.remote.rmmini):
             raise IncompatibleDeviceError(
                 "Incompatible device for recording IR packets"
             )
@@ -82,7 +82,7 @@ class BroadlinkDevice:
         Raises:
             IncompatibleDeviceError: If the device is incompatible
         """
-        if not isinstance(self._device, broadlink.device.rmmini):
+        if not isinstance(self._device, broadlink.remote.rmmini):
             raise IncompatibleDeviceError("Incompatible device for sending IR packets")
 
         self._device.send_data(packet)
@@ -108,10 +108,10 @@ class BroadlinkDevice:
         """
         try:
             return BroadlinkDevice._get_discover_info(broadlink.hello(ip_address))
-        except broadlink.e.NetworkTimeoutError:
+        except broadlink.e.NetworkTimeoutError as exc:
             raise DeviceNotFoundError(
                 f"Unable to find the Broadlink device with ip '{ip_address}'"
-            )
+            ) from exc
 
     @staticmethod
     def discover_all() -> list[BroadlinkDeviceDiscoverInfo]:
