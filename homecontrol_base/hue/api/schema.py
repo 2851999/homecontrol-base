@@ -397,6 +397,11 @@ class PaletteGet:
 
 
 @dataclass
+class SceneStatusGet:
+    active: Literal["inactive", "static", "dynamic_palette"]
+
+
+@dataclass
 class SceneGet:
     type: Literal["scene"]
     id: str
@@ -406,6 +411,7 @@ class SceneGet:
     palette: Optional[PaletteGet]
     speed: float
     auto_dynamic: bool
+    status: SceneStatusGet
     id_v1: Optional[str] = None
 
 

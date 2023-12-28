@@ -10,7 +10,9 @@ from homecontrol_base.hue.api.schema import (
     GroupedLightPut,
     LightPut,
     OnPut,
+    Recall,
     RoomGet,
+    ScenePut,
 )
 from homecontrol_base.hue.session import HueBridgeSession
 from homecontrol_base.hue.structs import (
@@ -18,6 +20,7 @@ from homecontrol_base.hue.structs import (
     HueRoomGroupedLightState,
     HueRoomLight,
     HueRoomLightState,
+    HueRoomSceneState,
     HueRoomState,
     HueRoomStateUpdate,
 )
@@ -70,7 +73,8 @@ class HueBridgeConnection(BaseConnection[HueBridgeSession]):
         """Returns the state of a HueRoom"""
 
         # Obtain the room itself
-        room = self._get_room(self._api_connection.get_room(room_id))
+        hue_room = self._api_connection.get_room(room_id)
+        room = self._get_room(hue_room)
 
         # Obtain the grouped light state
         grouped_light_state = self._api_connection.get_grouped_light(
@@ -97,6 +101,14 @@ class HueBridgeConnection(BaseConnection[HueBridgeSession]):
                 else None,
             )
 
+        # Locate all scenes
+        scenes: dict[str, HueRoomSceneState] = {}
+        for scene in self._api_connection.get_scenes():
+            if scene.group.rid == hue_room.id:
+                scenes[scene.id] = HueRoomSceneState(
+                    name=scene.metadata.name, status=scene.status.active
+                )
+
         return HueRoomState(
             grouped_light=HueRoomGroupedLightState(
                 on=grouped_light_state.on.on
@@ -109,6 +121,7 @@ class HueBridgeConnection(BaseConnection[HueBridgeSession]):
                 else None,
             ),
             lights=light_states,
+            scenes=scenes,
         )
 
     def set_room_state(
@@ -156,5 +169,9 @@ class HueBridgeConnection(BaseConnection[HueBridgeSession]):
                     else None,
                 )
                 self._api_connection.put_light(light_id, light_put)
+        if update_data.scene is not None:
+            self._api_connection.put_scene(
+                update_data.scene, ScenePut(recall=Recall(action="active"))
+            )
 
         return self.get_room_state(room_id)

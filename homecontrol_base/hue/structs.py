@@ -1,3 +1,4 @@
+from enum import StrEnum
 from typing import Optional
 
 from pydantic import BaseModel
@@ -51,10 +52,25 @@ class HueRoomLightState:
     colour: Optional[HueColour] = None
 
 
+class HueRoomSceneStatus(StrEnum):
+    INACTIVE = "inactive"
+    STATIC = "static"
+    DYNAMIC_PALETTE = "dynamic_palette"
+
+
+@dataclass
+class HueRoomSceneState:
+    """Stores basic info about the state of a scene found in a room"""
+
+    name: str
+    status: HueRoomSceneStatus
+
+
 @dataclass
 class HueRoomState:
     grouped_light: HueRoomGroupedLightState
     lights: dict[str, HueRoomLightState]
+    scenes: dict[str, HueRoomSceneState]
 
 
 class HueRoomGroupedLightStateUpdate(BaseModel):
@@ -74,3 +90,6 @@ class HueRoomLightStateUpdate(BaseModel):
 class HueRoomStateUpdate(BaseModel):
     grouped_light: Optional[HueRoomGroupedLightStateUpdate] = None
     lights: Optional[dict[str, HueRoomLightStateUpdate]] = None
+
+    # When specified will recall a scene given it's id (after any other updates)
+    scene: Optional[str] = None
