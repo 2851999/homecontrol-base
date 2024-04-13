@@ -1,7 +1,11 @@
 from msmart.device.AC.device import AirConditioner
 from msmart.discover import Discover
+from msmart.lan import AuthenticationError
 
-from homecontrol_base.aircon.exceptions import ACInvalidStateError
+from homecontrol_base.aircon.exceptions import (
+    ACAuthenticationError,
+    ACInvalidStateError,
+)
 from homecontrol_base.aircon.state import ACDeviceState
 from homecontrol_base.config.midea import MideaAccount
 from homecontrol_base.database.homecontrol_base import models
@@ -31,11 +35,20 @@ class ACDevice:
         """Initialises and authenticates the device
 
         Should be called immediately after __init__
+
+        Raises:
+            ACAuthenticationError: If authentication fails
         """
 
-        await self._device.authenticate(
-            token=self._device_info.token, key=self._device_info.key
-        )
+        try:
+            await self._device.authenticate(
+                token=self._device_info.token, key=self._device_info.key
+            )
+        except AuthenticationError as err:
+            raise ACAuthenticationError(
+                f"Failed to authenticate with AC unit {self._device_info.identifier}"
+            ) from err
+
         await self._device.get_capabilities()
 
     def _get_current_state(self) -> ACDeviceState:

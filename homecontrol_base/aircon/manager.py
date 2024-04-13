@@ -35,7 +35,11 @@ class ACManager:
         await self._load_all()
 
     async def _load_device(self, device_info: ACDeviceInfoInDB) -> ACDevice:
-        """Adds a device into _devices"""
+        """Adds a device into _devices
+
+        Raises:
+            ACAuthenticationError: If authentication fails for the device
+        """
         device = ACDevice(device_info)
         await device.initialise()
         # Must convert to string here as device_info.id is a UUID from the database
@@ -43,7 +47,11 @@ class ACManager:
         return device
 
     async def _load_all(self):
-        """Loads all devices from the database"""
+        """Loads all devices from the database
+
+        Raises:
+            ACAuthenticationError: If authentication fails for any devices
+        """
         with homecontrol_base_db.connect() as conn:
             devices = conn.ac_devices.get_all()
             for device_info in devices:
