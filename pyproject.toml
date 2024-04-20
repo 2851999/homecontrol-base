@@ -20,6 +20,7 @@ dependencies = [
     "msmart-ng",
     "SQLAlchemy",
     "sqlalchemy-utils",
+    "alembic",
     "zeroconf",
     "broadlink",
 ]
