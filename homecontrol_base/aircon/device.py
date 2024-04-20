@@ -1,3 +1,5 @@
+import asyncio
+
 from msmart.device.AC.device import AirConditioner
 from msmart.discover import Discover
 from msmart.lan import AuthenticationError
@@ -40,14 +42,20 @@ class ACDevice:
             ACAuthenticationError: If authentication fails
         """
 
-        try:
-            await self._device.authenticate(
-                token=self._device_info.token, key=self._device_info.key
-            )
-        except AuthenticationError as err:
-            raise ACAuthenticationError(
-                f"Failed to authenticate with AC unit {self._device_info.identifier}"
-            ) from err
+        # Attempt authentication up to 3 times (can often fail temporarily)
+        for retry in range(0, 3):
+            try:
+                await self._device.authenticate(
+                    token=self._device_info.token, key=self._device_info.key
+                )
+                break
+            except AuthenticationError as err:
+                if retry == 2:
+                    raise ACAuthenticationError(
+                        f"Failed to authenticate with AC unit {self._device_info.identifier} after retrying 3 times"
+                    ) from err
+                else:
+                    await asyncio.sleep(1)
 
         await self._device.get_capabilities()
 
