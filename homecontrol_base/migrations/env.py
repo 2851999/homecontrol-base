@@ -51,7 +51,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        # Use this to ensure caa work on sqlite too
+        # Use this to ensure can work on sqlite too
         render_as_batch=True,
     )
 
@@ -74,7 +74,10 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata, render_as_batch=True
+            connection=connection,
+            target_metadata=target_metadata,
+            # Use this to ensure can work on sqlite too
+            render_as_batch=True,
         )
 
         with context.begin_transaction():

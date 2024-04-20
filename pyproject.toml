@@ -24,3 +24,7 @@ dependencies = [
     "zeroconf",
     "broadlink",
 ]
+
+
+[project.scripts]
+homecontrol-base-alembic = "homecontrol_base.migrations:main"
