@@ -1,17 +1,14 @@
-# Python script that will apply the migrations up to head
-import sys
-import alembic.config
 import os
+import sys
+
+import alembic.config
 
 here = os.path.dirname(os.path.abspath(__file__))
-
-print(sys.argv[1:])
 
 alembic_args = [
     "-c",
     os.path.join(here, "alembic.ini"),
     *sys.argv[1:],
-    # 'upgrade', 'head'
 ]
 
 
