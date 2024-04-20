@@ -13,7 +13,9 @@ config = context.config
 database_config = DatabaseConfig()
 config.set_main_option(
     "sqlalchemy.url",
-    database_config.get_url("homecontrol_base").render_as_string(hide_password=False),
+    database_config.get_url("homecontrol_base").render_as_string(hide_password=False)
+    # Escape for configparser
+    .replace("%", "%%"),
 )
 
 # Interpret the config file for Python logging.
