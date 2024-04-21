@@ -1,6 +1,9 @@
 -------------------------------------------------------------
 Next version
 
+- Added alembic for database migrations
+- Retry up to 3 times on ACDevice authentication error
+
 -------------------------------------------------------------
 v0.1.1
 

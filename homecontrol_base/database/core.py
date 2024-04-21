@@ -53,13 +53,15 @@ class Database(Generic[TDatabaseConnection]):
                                     for functions for performing specific
                                     operations on the database)
             config (DatabaseConfig): Database config
+            alembic_config_path (Path): Path to alembic config (for stamping initial database version)
         """
 
         self._name = name
 
         # Create database if it doesn't exist in case not using sqlite
         url = config.get_url(self._name)
-        if not database_exists(url):
+        does_database_exist = database_exists(url)
+        if not does_database_exist:
             create_database(url)
 
         self._engine = create_engine(config.get_url(self._name))
@@ -69,9 +71,10 @@ class Database(Generic[TDatabaseConnection]):
         self._declarative_base = declarative_base
         self._connection_type = connection_type
 
-    def create_tables(self):
-        """Creates all of the tables within this database"""
-        self._declarative_base.metadata.create_all(bind=self._engine)
+        # Create the tables if needed
+        if not does_database_exist:
+            # Create all tables
+            self._declarative_base.metadata.create_all(bind=self._engine)
 
     @contextmanager
     def connect(self) -> Generator[TDatabaseConnection, None, None]:

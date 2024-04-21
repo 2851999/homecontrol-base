@@ -20,6 +20,14 @@ dependencies = [
     "msmart-ng",
     "SQLAlchemy",
     "sqlalchemy-utils",
+    "alembic",
     "zeroconf",
     "broadlink",
 ]
+
+
+[project.scripts]
+homecontrol-base-alembic = "homecontrol_base.migrations:main"
+
+[tool.setuptools.package-data]
+homecontrol_base = ["migrations/*"]
