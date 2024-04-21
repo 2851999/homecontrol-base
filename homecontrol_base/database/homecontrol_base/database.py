@@ -1,9 +1,7 @@
-from pathlib import Path
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from homecontrol_base import migrations
 from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.database.core import Database, DatabaseConnection
 from homecontrol_base.database.homecontrol_base.ac_device import ACDevicesDBConnection
@@ -64,7 +62,6 @@ class HomeControlBaseDatabase(Database[HomeControlBaseDatabaseConnection]):
             Base,
             HomeControlBaseDatabaseConnection,
             config,
-            Path(migrations.__file__).parent / "alembic.ini",
         )
 
 
