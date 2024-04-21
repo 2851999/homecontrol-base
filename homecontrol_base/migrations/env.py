@@ -13,7 +13,6 @@ config = context.config
 
 database_config = DatabaseConfig()
 
-# Escape for configparser (.replace)
 database_url = database_config.get_url("homecontrol_base").render_as_string(
     hide_password=False
 )
