@@ -1,9 +1,6 @@
 from contextlib import contextmanager
-from pathlib import Path
 from typing import Any, Generator, Generic, Type, TypeVar
 
-from alembic import command
-from alembic.config import Config
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy_utils import create_database, database_exists
@@ -44,7 +41,6 @@ class Database(Generic[TDatabaseConnection]):
         declarative_base: Any,
         connection_type: Type[TDatabaseConnection],
         config: DatabaseConfig,
-        alembic_config_path: Path,
     ) -> None:
         """Construct a database
 
@@ -75,14 +71,10 @@ class Database(Generic[TDatabaseConnection]):
         self._declarative_base = declarative_base
         self._connection_type = connection_type
 
-        # Create the tables if they starting for first time
+        # Create the tables if needed
         if not does_database_exist:
             # Create all tables
             self._declarative_base.metadata.create_all(bind=self._engine)
-
-            # Mark this version as head for future migrations
-            alembic_config = Config(alembic_config_path)
-            command.stamp(alembic_config, "head")
 
     @contextmanager
     def connect(self) -> Generator[TDatabaseConnection, None, None]:

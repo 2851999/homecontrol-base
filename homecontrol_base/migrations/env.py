@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+from sqlalchemy_utils import create_database, database_exists
 
 from homecontrol_base.config.database import DatabaseConfig
 from homecontrol_base.database.homecontrol_base.models import Base
@@ -11,12 +12,21 @@ from homecontrol_base.database.homecontrol_base.models import Base
 config = context.config
 
 database_config = DatabaseConfig()
+
+# Escape for configparser (.replace)
+database_url = database_config.get_url("homecontrol_base").render_as_string(
+    hide_password=False
+)
+
 config.set_main_option(
     "sqlalchemy.url",
-    database_config.get_url("homecontrol_base").render_as_string(hide_password=False)
     # Escape for configparser
-    .replace("%", "%%"),
+    database_url.replace("%", "%%"),
 )
+
+# Create the database if it doesn't exist
+if not database_exists(database_url):
+    create_database(database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
