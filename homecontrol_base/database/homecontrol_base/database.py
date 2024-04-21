@@ -58,10 +58,7 @@ class HomeControlBaseDatabase(Database[HomeControlBaseDatabaseConnection]):
 
     def __init__(self, config: DatabaseConfig) -> None:
         super().__init__(
-            "homecontrol_base",
-            Base,
-            HomeControlBaseDatabaseConnection,
-            config,
+            "homecontrol_base", Base, HomeControlBaseDatabaseConnection, config
         )
 
 
