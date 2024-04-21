@@ -75,10 +75,6 @@ class Database(Generic[TDatabaseConnection]):
             # Create all tables
             self._declarative_base.metadata.create_all(bind=self._engine)
 
-    def create_tables(self):
-        """Creates all of the tables within this database"""
-        self._declarative_base.metadata.create_all(bind=self._engine)
-
     @contextmanager
     def connect(self) -> Generator[TDatabaseConnection, None, None]:
         """Connects to the database"""
