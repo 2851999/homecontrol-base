@@ -140,11 +140,11 @@ from homecontrol_base.hue.bridge import HueBridge
 # )
 # device = broadlink_manager.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e")
 
-# with create_homecontrol_base_service() as service:
-#     bridge = service.hue.get_bridge_by_name("Bridge0")
+with create_homecontrol_base_service() as service:
+    bridge = service.hue.get_bridge_by_name("Home")
 
-#     with bridge.connect_api() as conn:
-#         lights = conn.get_lights()
+    with bridge.connect_api() as conn:
+        lights = conn.get_lights()
 #         for light in lights:
 #             if light.on.on:
 #                 print(light.id)
@@ -160,9 +160,9 @@ from homecontrol_base.hue.bridge import HueBridge
 #     print(test.broadlink.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e"))
 
 
-async def setup_ac():
-    with create_homecontrol_base_service() as service:
-        await service.aircon.add_device("Joel's Room", "192.168.1.77")
+# async def setup_ac():
+#     with create_homecontrol_base_service() as service:
+#         await service.aircon.add_device("Joel's Room", "192.168.1.77")
 
 
 #         await service.aircon.add_device("Games Room", "192.168.1.85")
@@ -170,7 +170,7 @@ async def setup_ac():
 #         await service.aircon.add_device("Mum's Room", "192.168.1.237")
 
 
-run_until_complete(setup_ac)
+# run_until_complete(setup_ac)
 
 
 # async def test_set_ac_state():

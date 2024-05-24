@@ -117,11 +117,9 @@ class EffectsGet:
 
 @dataclass
 class TimedEffectsGet:
-    effect: Literal["sunrise", "no_effect"]
     status_values: list[str]
-    status: Literal["sunrise", "no_effect"]
+    status: Literal["sunrise", "sunset", "no_effect"]
     effect_values: list[str]
-    duration: Optional[int] = None
 
 
 @dataclass
@@ -256,12 +254,14 @@ class GradientPut:
 
 @dataclass
 class EffectsPut:
-    effect: Optional[Literal["sparkle", "fire", "candle", "no_effect"]] = None
+    effect: Optional[
+        Literal["prism", "opal", "glisten", "sparkle", "fire", "candle", "no_effect"]
+    ] = None
 
 
 @dataclass
 class TimedEffectsPut:
-    effect: Optional[Literal["sunrise", "no_effect"]] = None
+    effect: Optional[Literal["sunrise", "sunset", "no_effect"]] = None
     duration: Optional[int] = None
 
 

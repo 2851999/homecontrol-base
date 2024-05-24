@@ -1,6 +1,8 @@
 -------------------------------------------------------------
 Next version
 
+- Fix bug: LightGet's timed effects were wrong for
+           Hue bridge version 1.65.1964061010
 - Upgrade packages
 
 -------------------------------------------------------------
