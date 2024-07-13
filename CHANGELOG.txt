@@ -1,4 +1,10 @@
 -------------------------------------------------------------
+Next version
+
+- Fix bug: ACDevice display_on was True when the device was
+           off
+
+-------------------------------------------------------------
 v0.3.0
 
 - Allow an ACDevice's display to be turned on and off

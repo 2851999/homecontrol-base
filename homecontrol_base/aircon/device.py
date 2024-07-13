@@ -77,7 +77,7 @@ class ACDevice:
             fahrenheit=self._device.fahrenheit,
             indoor_temperature=self._device.indoor_temperature,
             outdoor_temperature=self._device.outdoor_temperature,
-            display_on=self._device.display_on,
+            display_on=self._device.display_on if self._device.power_state else False,
             prompt_tone=self._device.beep,
         )
 
