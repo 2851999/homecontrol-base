@@ -219,9 +219,10 @@ async def test():
     with create_homecontrol_base_service() as service:
         device = await service.aircon.get_device_by_name("Games Room")
         state = await device.get_state()
-        # state.power = True
-        # state.display_on = True
-        # await device.set_state(state)
+        state.power = False
+        state.display_on = True
+        state.prompt_tone = True
+        await device.set_state(state)
         print(state)
 
 

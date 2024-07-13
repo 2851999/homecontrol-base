@@ -83,6 +83,16 @@ class ACDevice:
 
     def _assign_state(self, state: ACDeviceState):
         """Assigns a given state to the device"""
+
+        # Control the display only if on, otherwise ignore unless trying to turn on
+        # while also having the display off
+        if self._device.power_state is True:
+            self._should_toggle_display = (
+                self._device.display_on is not state.display_on
+            )
+        elif state.power is True:
+            self._should_toggle_display = not state.display_on
+
         self._device.power_state = state.power
         self._device.target_temperature = state.target_temperature
         self._device.operational_mode = state.operational_mode
@@ -92,7 +102,6 @@ class ACDevice:
         self._device.turbo_mode = state.turbo_mode
         self._device.fahrenheit = state.fahrenheit
         self._device.beep = state.prompt_tone
-        self._should_toggle_display = self._device.display_on is not state.display_on
 
     def _validate_state(self, state: ACDeviceState):
         """Checks that the given state is valid (for use before it is sent to the device)
@@ -154,8 +163,10 @@ class ACDevice:
         """
         try:
             await self._device.apply()
+
             if self._should_toggle_display:
                 await self._device.toggle_display()
+                self._should_toggle_display = False
         except UnboundLocalError as err:
             if current_retry < 3:
                 self._apply_state(current_retry=current_retry + 1)

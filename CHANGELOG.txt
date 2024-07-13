@@ -1,4 +1,9 @@
 -------------------------------------------------------------
+Next version
+
+- Fix bug: ACDevice display_on did not work correctly
+
+-------------------------------------------------------------
 v0.3.1
 
 - Fix bug: ACDevice display_on was True when the device was
