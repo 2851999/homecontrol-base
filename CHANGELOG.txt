@@ -1,5 +1,5 @@
 -------------------------------------------------------------
-Next version
+v0.3.2
 
 - Fix bug: ACDevice display_on did not work correctly
 
