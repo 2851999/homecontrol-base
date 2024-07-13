@@ -140,11 +140,11 @@ from homecontrol_base.hue.bridge import HueBridge
 # )
 # device = broadlink_manager.get_device("d8d759d1-0e53-4aee-b9d1-9d172cf3c08e")
 
-with create_homecontrol_base_service() as service:
-    bridge = service.hue.get_bridge_by_name("Home")
+# with create_homecontrol_base_service() as service:
+#     bridge = service.hue.get_bridge_by_name("Home")
 
-    with bridge.connect_api() as conn:
-        lights = conn.get_lights()
+#     with bridge.connect_api() as conn:
+#         lights = conn.get_lights()
 #         for light in lights:
 #             if light.on.on:
 #                 print(light.id)
@@ -215,15 +215,16 @@ with create_homecontrol_base_service() as service:
 #         print(conn.get_rooms())
 
 
-# async def test():
-#     with create_homecontrol_base_service() as service:
-#         await service.aircon.get_device("d257751b-996a-4cc9-8009-a32bd38857dd")
-#         await service.aircon.get_device("d257751b-996a-4cc9-8009-a32bd38857dd")
-#         await service.aircon.get_device("d257751b-996a-4cc9-8009-a32bd38857dd")
-#         print(len(service._ac_manager._devices))
+async def test():
+    with create_homecontrol_base_service() as service:
+        device = await service.aircon.get_device_by_name("Games Room")
+        state = await device.get_state()
+        # state.power = True
+        state.display_on = True
+        await device.set_state(state)
 
 
-# run_until_complete(test)
+run_until_complete(test)
 
 # with create_homecontrol_base_service() as service:
 #     bridge = service.hue.get_bridge("1e9ffff0-960b-4dd9-8372-a16b6df69d0e")
