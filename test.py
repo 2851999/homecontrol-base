@@ -220,8 +220,9 @@ async def test():
         device = await service.aircon.get_device_by_name("Games Room")
         state = await device.get_state()
         # state.power = True
-        state.display_on = True
-        await device.set_state(state)
+        # state.display_on = True
+        # await device.set_state(state)
+        print(state)
 
 
 run_until_complete(test)
