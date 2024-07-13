@@ -20,6 +20,9 @@ class ACDevice:
     _device_info: models.ACDeviceInfoInDB
     _device: AirConditioner
 
+    # Whether to toggle the display the next time the state is applied
+    _should_toggle_display: bool
+
     def __init__(self, device_info: models.ACDeviceInfoInDB):
         """Initialises and authenticates the device
 
@@ -32,6 +35,8 @@ class ACDevice:
         self._device = AirConditioner(
             device_info.ip_address, device_info.identifier, 6444
         )
+
+        self._should_toggle_display = False
 
     async def initialise(self):
         """Initialises and authenticates the device
@@ -87,6 +92,7 @@ class ACDevice:
         self._device.turbo_mode = state.turbo_mode
         self._device.fahrenheit = state.fahrenheit
         self._device.beep = state.prompt_tone
+        self._should_toggle_display = self._device.display_on is not state.display_on
 
     def _validate_state(self, state: ACDeviceState):
         """Checks that the given state is valid (for use before it is sent to the device)
@@ -148,6 +154,8 @@ class ACDevice:
         """
         try:
             await self._device.apply()
+            if self._should_toggle_display:
+                await self._device.toggle_display()
         except UnboundLocalError as err:
             if current_retry < 3:
                 self._apply_state(current_retry=current_retry + 1)

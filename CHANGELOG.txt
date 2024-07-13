@@ -1,4 +1,10 @@
 -------------------------------------------------------------
+Next version
+
+- Allow an ACDevice's display to be turned on and off
+- Upgrade packages
+
+-------------------------------------------------------------
 v0.2.2
 
 - Upgrade packages
