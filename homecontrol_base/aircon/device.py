@@ -72,8 +72,8 @@ class ACDevice:
             operational_mode=self._device.operational_mode,
             fan_speed=self._device.fan_speed,
             swing_mode=self._device.swing_mode,
-            eco_mode=self._device.eco_mode,
-            turbo_mode=self._device.turbo_mode,
+            eco_mode=self._device.eco,
+            turbo_mode=self._device.turbo,
             fahrenheit=self._device.fahrenheit,
             indoor_temperature=self._device.indoor_temperature,
             outdoor_temperature=self._device.outdoor_temperature,
@@ -98,8 +98,8 @@ class ACDevice:
         self._device.operational_mode = state.operational_mode
         self._device.fan_speed = state.fan_speed
         self._device.swing_mode = state.swing_mode
-        self._device.eco_mode = state.eco_mode
-        self._device.turbo_mode = state.turbo_mode
+        self._device.eco = state.eco_mode
+        self._device.turbo = state.turbo_mode
         self._device.fahrenheit = state.fahrenheit
         self._device.beep = state.prompt_tone
 
